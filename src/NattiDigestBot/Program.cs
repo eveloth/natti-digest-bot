@@ -1,9 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using NattiDigestBot;
 using NattiDigestBot.Controllers;
+using NattiDigestBot.Data;
 using NattiDigestBot.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 // Setup Bot configuration
 var botConfigurationSection = builder.Configuration.GetSection(BotConfiguration.Configuration);
@@ -26,6 +31,11 @@ builder.Services.AddHttpClient("telegram_bot_client")
 
 // Dummy business-logic service
 builder.Services.AddScoped<UpdateHandlers>();
+
+builder.Services.AddDbContext<DigestContext>(optionsBuilder =>
+{
+    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+});
 
 // There are several strategies for completing asynchronous tasks during startup.
 // Some of them could be found in this article https://andrewlock.net/running-async-tasks-on-app-startup-in-asp-net-core-part-1/
