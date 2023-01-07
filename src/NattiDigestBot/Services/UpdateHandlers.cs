@@ -1,5 +1,6 @@
 using NattiDigestBot.Data.Models;
-using NattiDigestBot.StateMachine;
+using NattiDigestBot.Domain;
+using NattiDigestBot.State;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;

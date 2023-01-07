@@ -1,7 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-
-namespace NattiDigestBot.Data.Models;
+namespace NattiDigestBot.Domain;
 
 public class Category
 {

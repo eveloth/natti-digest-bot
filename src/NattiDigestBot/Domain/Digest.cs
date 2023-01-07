@@ -1,4 +1,4 @@
-namespace NattiDigestBot.Data.Models;
+namespace NattiDigestBot.Domain;
 
 public class Digest
 {

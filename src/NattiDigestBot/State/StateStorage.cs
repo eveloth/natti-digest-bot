@@ -1,7 +1,4 @@
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-
-namespace NattiDigestBot.StateMachine;
+namespace NattiDigestBot.State;
 
 public static class StateStorage
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using NattiDigestBot.Data.Models;
-using NattiDigestBot.Data.Models.Configurations;
+using NattiDigestBot.Data.ModelConfigurations;
+using NattiDigestBot.Domain;
 
 namespace NattiDigestBot.Data;
 

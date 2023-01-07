@@ -1,4 +1,4 @@
-namespace NattiDigestBot.StateMachine;
+namespace NattiDigestBot.State;
 
 public enum ChatMode
 {

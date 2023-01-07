@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NattiDigestBot.Domain;
 
-namespace NattiDigestBot.Data.Models.Configurations;
+namespace NattiDigestBot.Data.ModelConfigurations;
 
 public class DigestEntryConfiguration : IEntityTypeConfiguration<DigestEntry>
 {

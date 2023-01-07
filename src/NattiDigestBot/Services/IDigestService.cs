@@ -1,4 +1,5 @@
 using NattiDigestBot.Data.Models;
+using NattiDigestBot.Domain;
 
 namespace NattiDigestBot.Services;
 

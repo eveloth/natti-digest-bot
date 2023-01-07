@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace NattiDigestBot.Data.Models;
+namespace NattiDigestBot.Domain;
 
 public class Account
 {
