@@ -1,7 +1,6 @@
-using NattiDigestBot.Data.Models;
 using NattiDigestBot.Domain;
 
-namespace NattiDigestBot.Services;
+namespace NattiDigestBot.Services.DbServices;
 
 public interface IDigestService
 {

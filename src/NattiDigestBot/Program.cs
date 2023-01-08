@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using NattiDigestBot;
+using NattiDigestBot.Commands;
+using NattiDigestBot.Commands.Interfaces;
 using NattiDigestBot.Controllers;
 using NattiDigestBot.Data;
 using NattiDigestBot.Services;
+using NattiDigestBot.Services.DbServices;
+using NattiDigestBot.State;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,13 +25,16 @@ var botConfiguration = botConfigurationSection.Get<BotConfiguration>();
 // More read:
 //  https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests#typed-clients
 //  https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
-builder.Services.AddHttpClient("telegram_bot_client")
-                .AddTypedClient<ITelegramBotClient>((httpClient, sp) =>
-                {
-                    BotConfiguration? botConfig = sp.GetConfiguration<BotConfiguration>();
-                    TelegramBotClientOptions options = new(botConfig.BotToken);
-                    return new TelegramBotClient(options, httpClient);
-                });
+builder.Services
+    .AddHttpClient("telegram_bot_client")
+    .AddTypedClient<ITelegramBotClient>(
+        (httpClient, sp) =>
+        {
+            BotConfiguration? botConfig = sp.GetConfiguration<BotConfiguration>();
+            TelegramBotClientOptions options = new(botConfig.BotToken);
+            return new TelegramBotClient(options, httpClient);
+        }
+    );
 
 // Dummy business-logic service
 builder.Services.AddScoped<UpdateHandlers>();
@@ -42,15 +49,24 @@ builder.Services.AddDbContext<DigestContext>(optionsBuilder =>
 // We are going to use IHostedService to add and later remove Webhook
 builder.Services.AddHostedService<ConfigureWebhook>();
 
+builder.Services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+builder.Services.AddScoped<ICommandExecutor, CommandExecutor>();
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+
 // The Telegram.Bot library heavily depends on Newtonsoft.Json library to deserialize
 // incoming webhook updates and send serialized responses back.
 // Read more about adding Newtonsoft.Json to ASP.NET Core pipeline:
 //   https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-6.0#add-newtonsoftjson-based-json-format-support
-builder.Services
-    .AddControllers()
-    .AddNewtonsoftJson();
+builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
+
+var botClient = app.Services.GetRequiredService<ITelegramBotClient>();
+var me = botClient.GetMeAsync().Result;
+StateStorage.BotName = me.Username;
+Console.WriteLine($"Setting bot name to: {StateStorage.BotName}");
+
 // Construct webhook route from the Route configuration parameter
 // It is expected that BotController has single method accepting Update
 app.MapBotWebhookRoute<BotController>(route: botConfiguration.Route);

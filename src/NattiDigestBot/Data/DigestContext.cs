@@ -4,7 +4,7 @@ using NattiDigestBot.Domain;
 
 namespace NattiDigestBot.Data;
 
-internal class DigestContext : DbContext
+public class DigestContext : DbContext
 {
     public DigestContext(DbContextOptions options) : base(options)
     {
