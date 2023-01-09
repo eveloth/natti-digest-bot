@@ -5,6 +5,7 @@ using NattiDigestBot.Commands;
 using NattiDigestBot.Commands.Interfaces;
 using NattiDigestBot.Controllers;
 using NattiDigestBot.Data;
+using NattiDigestBot.Extensions;
 using NattiDigestBot.Services;
 using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;

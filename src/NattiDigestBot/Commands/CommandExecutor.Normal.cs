@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using NattiDigestBot.Extensions;
 using NattiDigestBot.State;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -18,7 +18,7 @@ public partial class CommandExecutor
             + "Для того, чтобы начать пользоваться ботом, тебе нужно привязать группу, которую ты администрируешь, "
             + "подтвердить, что это действительно ты — чтобы никто не мог отправлять в группы спам "
             + "с помощью дайджестов, и добавить хотя бы одну категорию.\n\n"
-            + "Чтобы узнать подробную информацию о каждой команде, напиши /help.";
+            + "Чтобы узнать подробную информацию обо мне, напиши /help.";
 
         var userId = message.Chat.Id;
 
@@ -30,7 +30,7 @@ public partial class CommandExecutor
         _logger.LogInformation("Executing command {Command}", nameof(Bind));
 
         var userId = message.Chat.Id;
-        var argument = message.Text!.Split(' ', 2).ElementAtOrDefault(1);
+        var argument = message.GetCommandArguments();
 
         if (argument is null)
         {
@@ -49,6 +49,7 @@ public partial class CommandExecutor
         {
             const string parsingErrorReply =
                 "Ой, не могу прочесть Id группы. Пожалуйста, проверь, что Id правильный!";
+
             await _botClient.SendTextMessageAsync(
                 userId,
                 parsingErrorReply,
@@ -80,9 +81,9 @@ public partial class CommandExecutor
         await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
     }
 
-    public async Task Confirm(Message message, CancellationToken cancellationToken)
+    public async Task StartConfirmationProcess(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(Confirm));
+        _logger.LogInformation("Executing command {Command}", nameof(StartConfirmationProcess));
 
         var userId = message.Chat.Id;
         var account = await _accountService.Get(userId, cancellationToken);
@@ -111,11 +112,63 @@ public partial class CommandExecutor
                 alreadyConfirmedReply,
                 cancellationToken: cancellationToken
             );
+
+            return;
         }
 
         StateStorage.AddToWaitingForConfirmationList(account.GroupId.Value, account.AccountId);
 
         const string reply = "Жду от тебя подтверждения в группе!";
+        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+    }
+
+    public async Task DeleteAccount(Message message, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Executing command {Command}", nameof(DeleteAccount));
+
+        var userId = message.Chat.Id;
+        var argument = message.GetCommandArguments();
+
+        var parsedSuccessfuly = long.TryParse(argument, out var userIdForConfirmation);
+
+        if (!parsedSuccessfuly)
+        {
+            const string parsingErrorReply =
+                "Хм, не получилось прочесть уникальный идентификатор твоего аккаунта. "
+                + "Пожалуйста, проверь, что всё правильно!";
+
+            await _botClient.SendTextMessageAsync(
+                userId,
+                parsingErrorReply,
+                cancellationToken: cancellationToken
+            );
+
+            return;
+        }
+
+        if (userId != userIdForConfirmation)
+        {
+            const string doesntMatchPeply =
+                "Этот идентификатор не совпадает с идентификатором твоего аккаунта.";
+
+            await _botClient.SendTextMessageAsync(
+                userId,
+                doesntMatchPeply,
+                cancellationToken: cancellationToken
+            );
+
+            return;
+        }
+
+        var account = await _accountService.Get(userId, cancellationToken);
+        StateStorage.DropState(userId, account!.GroupId);
+        await _accountService.Delete(account.AccountId, cancellationToken);
+
+        const string reply =
+            "Твой аккаунт удалён! Чтобы начать всё заново, просто напиши мне любое сообщение. "
+            + "Помни, что после удаления я не храню никакие данные, поэтому привязывать группу, "
+            + "создавать категории и составлять дайджесты нужно будет заново.";
+
         await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
     }
 

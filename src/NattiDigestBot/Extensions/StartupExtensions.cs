@@ -2,9 +2,9 @@ using Microsoft.Extensions.Options;
 
 #pragma warning disable CA1050 // Declare types in namespaces
 #pragma warning disable RCS1110 // Declare types in namespaces
-namespace NattiDigestBot;
+namespace NattiDigestBot.Extensions;
 
-public static class Extensions
+public static class StartupExtensions
 #pragma warning restore RCS1110 // Declare types in namespaces
 #pragma warning restore CA1050 // Declare types in namespaces
 {

@@ -2,7 +2,10 @@ namespace NattiDigestBot.State;
 
 public static class StateStorage
 {
-    private static string _botName;
+    private static string _botName = null!;
+    private static readonly Dictionary<long, ChatMode> ChatMode = new();
+    private static readonly Dictionary<long, long> WaitingForConfirmation = new();
+    private static readonly Dictionary<long, DateOnly> CurrentDigest = new();
 
     public static string? BotName
     {
@@ -11,10 +14,6 @@ public static class StateStorage
             _botName =
                 value ?? throw new NullReferenceException("Couldn't get bot username, exiting");
     }
-
-    public static Dictionary<long, ChatMode> ChatMode { get; set; } = new();
-    public static Dictionary<long, long> WaitingForConfirmation { get; set; } = new();
-    public static Dictionary<long, DateOnly> CurrentDigest { get; set; } = new();
 
     public static ChatMode GetChatMode(long userId)
     {
@@ -77,5 +76,16 @@ public static class StateStorage
         {
             CurrentDigest[userId] = digestDate;
         }
+    }
+
+    public static void DropState(long userId, long? groupId)
+    {
+        if (groupId is not null && IsConfirmationRequestedForUser(userId))
+        {
+            RemoveFromWaitingForConfirmationList(groupId.Value);
+        }
+
+        ChatMode.Remove(userId);
+        CurrentDigest.Remove(userId);
     }
 }

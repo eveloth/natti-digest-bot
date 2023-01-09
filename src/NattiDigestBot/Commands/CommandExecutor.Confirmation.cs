@@ -22,6 +22,12 @@ public partial class CommandExecutor
             );
             return;
         }
+        
+        await _botClient.DeleteMessageAsync(
+            message.Chat.Id,
+            message.MessageId,
+            cancellationToken: cancellationToken
+        );
 
         var groupId = message.Chat.Id;
         var userId = StateStorage.GetGroupOwner(groupId);

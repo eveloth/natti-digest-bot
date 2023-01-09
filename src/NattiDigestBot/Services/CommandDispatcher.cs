@@ -25,9 +25,12 @@ public class CommandDispatcher : ICommandDispatcher
         var action = command switch
         {
             "/start" => _commandExecutor.Start(message, cancellationToken),
+            "/help" => _commandExecutor.SendHelp(message, cancellationToken),
+            "/info" => _commandExecutor.SendCommandInfo(message, cancellationToken),
             "/bind" => _commandExecutor.Bind(message, cancellationToken),
             "/unbind" => _commandExecutor.Unbind(message, cancellationToken),
-            "/confirm" => _commandExecutor.Confirm(message, cancellationToken),
+            "/confirm" => _commandExecutor.StartConfirmationProcess(message, cancellationToken),
+            "/delete_account" => _commandExecutor.DeleteAccount(message, cancellationToken),
             "/digest" => _commandExecutor.Digest(message, cancellationToken),
             "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),
             _ => _commandExecutor.SendUsage(message, cancellationToken)
