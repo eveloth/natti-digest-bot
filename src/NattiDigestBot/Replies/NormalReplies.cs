@@ -1,3 +1,4 @@
+using NattiDigestBot.Replies.Menus;
 using NattiDigestBot.State;
 using Telegram.Bot.Types.Enums;
 
@@ -30,8 +31,7 @@ public static class NormalReplies
         new()
         {
             ReplyText =
-                "Кажется, к твоему аккаунту ещё не привязана группа. Привяжи её с помощью "
-                + "команды /bind, и после этого ты сможешь подтвердить, что ты её администратор."
+                "Кажется, к твоему аккаунту ещё не привязана группа. Привяжи её с помощью команды /bind."
         };
 
     public static Reply GroupAlreadyConfirmedReply { get; } =
@@ -73,4 +73,54 @@ public static class NormalReplies
         new() { ReplyText = "Категория обновлена!" };
 
     public static Reply CategoryDeletedRelpy { get; } = new() { ReplyText = "Категория удалена!" };
+
+    public static Reply NoDigestArgumentReply { get; } =
+        new() { ReplyText = "Укажи, пожалуйста, дату дайджеста!" };
+
+    public static Reply InvalidDigestArgumentReply { get; } =
+        new()
+        {
+            ReplyText =
+                "У меня не получилось понять, дайджест за какую дату ты имеешь в виду. "
+                + "Укажи, пожалуйста, дату вот в таком формате: <i>31/01/09</i>",
+            ParseMode = ParseMode.Html
+        };
+
+    public static Reply EnteringDigestModeReply { get; } =
+        new()
+        {
+            ReplyText =
+                "Интерактивный режим создания и редактирования дайджеста включён! \n\n"
+                + "Все сообщения, кроме команд /raw_preview, /delete и /make, я постараюсь записать в дайджест, — "
+                + "не забудь указать категорию, описание и ссылку. Чтобы выйти из этого режима, "
+                + "дай команду /exit."
+        };
+
+    public static Reply DigestNotFoundReply { get; } =
+        new() { ReplyText = "У меня не получилось найти этот дайджест :(" };
+
+    public static Reply DigestNotMadeReply { get; } =
+        new()
+        {
+            ReplyText =
+                "Кажется, дайджест ещё не сформирован — перейди в режим создания дайджеста "
+                + "и дай команду /make, после чего сможешь его отправить."
+        };
+
+    public static Reply DigestAlreadySentReply { get; } =
+        new() { ReplyText = "Этот дайджест уже был отправлен." };
+
+    public static Reply DigestSentReply { get; } = new() { ReplyText = "Дайджест отправлен!" };
+
+    public static Reply EnteringEditModeReply { get; } =
+        new()
+        {
+            ReplyText =
+                "Финальные штрихи! Сейчас я пришлю тебе сообщение с текстом дайджеста, а ты сможешь "
+                + "отредактировать его так, как тебе нравится — просто скопируй его, исправь то, "
+                + "что нужно, и пришли мне обратно.\n\n"
+                + "Для стилей, вроде жирного или подчёркнутого текста, спойлеров и всего такого "
+                + "используй HTML.",
+            ReplyMarkup = HtmlReferenceMenuMarkup.HtmlReference
+        };
 }

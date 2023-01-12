@@ -12,4 +12,6 @@ public interface ICallbackQueryProcessor
     Task ShowDeleteAccountPrompt(CallbackQuery query, CancellationToken cancellationToken);
     Task DeleteAccount(CallbackQuery query, CancellationToken cancellationToken);
     Task BackToMain(CallbackQuery query, CancellationToken cancellationToken);
+    Task ShowHtmlReference(CallbackQuery query, CancellationToken cancellationToken);
+    Task BackToEdit(CallbackQuery query, CancellationToken cancellationToken);
 }

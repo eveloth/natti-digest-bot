@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using NattiDigestBot.Commands.Interfaces;
 using NattiDigestBot.Replies.Menus;
 using NattiDigestBot.State;
@@ -63,8 +62,11 @@ public class CommandDispatcher : ICommandDispatcher
 
         var action = command switch
         {
+            "/raw_preview" => _commandExecutor.RawPreview(message, cancellationToken),
+            "/delete" => _commandExecutor.RemoveEntry(message, cancellationToken),
+            "/make" => _commandExecutor.Make(message, cancellationToken),
             "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),
-            _ => throw new NotImplementedException()
+            _ => _commandExecutor.AddEntry(message, cancellationToken)
         };
 
         await action;
@@ -82,7 +84,7 @@ public class CommandDispatcher : ICommandDispatcher
         var action = command switch
         {
             "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),
-            _ => throw new NotImplementedException()
+            _ => _commandExecutor.UpdateDigestText(message, cancellationToken)
         };
 
         await action;
@@ -156,6 +158,25 @@ public class CommandDispatcher : ICommandDispatcher
                 => _callbackQueryProcessor.DeleteAccount(query, cancellationToken),
             _ when menuSection.Equals(CallbackData.Back)
                 => _callbackQueryProcessor.BackToMain(query, cancellationToken),
+            _ => Task.CompletedTask
+        };
+
+        await action;
+    }
+
+    public async Task HandleHtmlReferenceMenuCallbackQuery(
+        CallbackQuery query,
+        CancellationToken cancellationToken
+    )
+    {
+        var menuSection = query.Data!.Split(':')[1];
+
+        var action = menuSection switch
+        {
+            _ when menuSection.Equals(CallbackData.Reference)
+                => _callbackQueryProcessor.ShowHtmlReference(query, cancellationToken),
+            _ when menuSection.Equals(CallbackData.Back)
+                => _callbackQueryProcessor.BackToEdit(query, cancellationToken),
             _ => Task.CompletedTask
         };
 

@@ -2,7 +2,9 @@ using NattiDigestBot.Domain;
 using NattiDigestBot.Extensions;
 using NattiDigestBot.Replies;
 using NattiDigestBot.State;
+using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace NattiDigestBot.Commands;
 
@@ -308,6 +310,47 @@ public partial class CommandExecutor
             nameof(Digest),
             userId
         );
+
+        var argument = message.GetCommandArguments();
+
+        if (argument is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var parsedSuccessfuly = DateOnly.TryParse(argument, out var digestDate);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var digest = await _digestService.Get(userId, digestDate, cancellationToken);
+
+        if (digest is null)
+        {
+            digest = new Digest { AccountId = userId, Date = digestDate };
+            await _digestService.Create(digest, cancellationToken);
+        }
+
+        StateStorage.SetChatModeFor(userId, ChatMode.Digest);
+        StateStorage.SetCurrentDigest(userId, digest.Date);
+
+        await _botClient.SendReply(
+            userId,
+            NormalReplies.EnteringDigestModeReply,
+            cancellationToken
+        );
     }
 
     public async Task Preview(Message message, CancellationToken cancellationToken)
@@ -319,6 +362,45 @@ public partial class CommandExecutor
             nameof(Preview),
             userId
         );
+
+        var argument = message.GetCommandArguments();
+
+        if (argument is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var parsedSuccessfuly = DateOnly.TryParse(argument, out var digestDate);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var digest = await _digestService.Get(userId, digestDate, cancellationToken);
+
+        if (digest is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.DigestNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var reply = ReplyFactory.DigestPreviewReply(digest);
+        await _botClient.SendReply(userId, reply, cancellationToken);
     }
 
     public async Task Edit(Message message, CancellationToken cancellationToken)
@@ -330,6 +412,50 @@ public partial class CommandExecutor
             nameof(Edit),
             userId
         );
+
+        var argument = message.GetCommandArguments();
+
+        if (argument is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var parsedSuccessfuly = DateOnly.TryParse(argument, out var digestDate);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var digest = await _digestService.Get(userId, digestDate, cancellationToken);
+
+        if (digest is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.DigestNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        StateStorage.SetChatModeFor(userId, ChatMode.Edit);
+        StateStorage.SetCurrentDigest(userId, digest.Date);
+
+        await _botClient.SendReply(userId, NormalReplies.EnteringEditModeReply, cancellationToken);
+
+        var reply = ReplyFactory.DigestPreviewReply(digest);
+        await _botClient.SendReply(userId, reply, cancellationToken);
     }
 
     public async Task Send(Message message, CancellationToken cancellationToken)
@@ -341,5 +467,81 @@ public partial class CommandExecutor
             nameof(Send),
             userId
         );
+
+        var argument = message.GetCommandArguments();
+
+        if (argument is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var parsedSuccessfuly = DateOnly.TryParse(argument, out var digestDate);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidDigestArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var digest = await _digestService.Get(userId, digestDate, cancellationToken);
+
+        if (digest is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.DigestNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        if (digest.IsSent)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.DigestAlreadySentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var account = await _accountService.Get(userId, cancellationToken);
+
+        var groupId = account!.GroupId;
+
+        if (groupId is null)
+        {
+            await _botClient.SendReply(userId, NormalReplies.GroupIdNotSetReply, cancellationToken);
+            return;
+        }
+
+        var digestText = digest.DigestText;
+
+        if (digestText is null)
+        {
+            await _botClient.SendReply(userId, NormalReplies.DigestNotMadeReply, cancellationToken);
+            return;
+        }
+
+        await _botClient.SendTextMessageAsync(
+            groupId,
+            digestText,
+            parseMode: ParseMode.Html,
+            cancellationToken: cancellationToken
+        );
+
+        digest.IsSent = true;
+        await _digestService.Update(digest, cancellationToken);
+
+        await _botClient.SendReply(userId, NormalReplies.DigestSentReply, cancellationToken);
     }
 }

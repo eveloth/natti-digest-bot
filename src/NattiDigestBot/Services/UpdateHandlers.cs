@@ -110,6 +110,8 @@ public class UpdateHandlers
         {
             _ when callbackHeader.Equals(CallbackData.Main)
                 => _commandDispatcher.HandleMainMenuCallbackQuery(callbackQuery, cancellationToken),
+            _ when callbackHeader.Equals(CallbackData.Html)
+                => _commandDispatcher.HandleHtmlReferenceMenuCallbackQuery(callbackQuery, cancellationToken),
             _ => Task.CompletedTask
         };
 

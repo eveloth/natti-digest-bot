@@ -30,7 +30,8 @@ public static class HelpMenu
         new()
         {
             ReplyText =
-                "Чтобы узнать ID своей группы, открой eё в веб-версии Telegram (https://web.telegram.org/z/) "
+                "Чтобы узнать ID своей группы, открой eё в веб-версии Telegram "
+                + "(<a href=\"https://web.telegram.org/z/\">тык</a>) "
                 + "и посмотри в адресную строку, она должна выглядеть примерно так: \n\n"
                 + "<i>https://web.telegram.org/z/-987654321</i>\n\n"
                 + "Нам нужно число, которое идёт после / и начинается с минуса.\n"

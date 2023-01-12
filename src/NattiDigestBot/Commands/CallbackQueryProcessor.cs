@@ -159,4 +159,32 @@ public class CallbackQueryProcessor : ICallbackQueryProcessor
 
         await _botClient.EditReply(userId, messageId, HelpMenu.Entrypoint, cancellationToken);
     }
+
+    public async Task ShowHtmlReference(CallbackQuery query, CancellationToken cancellationToken)
+    {
+        var userId = query.From.Id;
+        var messageId = query.Message!.MessageId;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(ShowHtmlReference),
+            userId
+        );
+
+        await _botClient.EditReply(userId, messageId, HtmlReferenceMenu.HtmlReferenceSection, cancellationToken);
+    }
+
+    public async Task BackToEdit(CallbackQuery query, CancellationToken cancellationToken)
+    {
+        var userId = query.From.Id;
+        var messageId = query.Message!.MessageId;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(BackToEdit),
+            userId
+        );
+
+        await _botClient.EditReply(userId, messageId, NormalReplies.EnteringEditModeReply, cancellationToken);
+    }
 }

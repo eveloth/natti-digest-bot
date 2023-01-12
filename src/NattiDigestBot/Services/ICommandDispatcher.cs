@@ -10,4 +10,5 @@ public interface ICommandDispatcher
     Task HandleWaitingForConfirmationMode(Message message, CancellationToken cancellationToken);
     Task HandleConfirmationFromGroup(Message message, CancellationToken cancellationToken);
     Task HandleMainMenuCallbackQuery(CallbackQuery query, CancellationToken cancellationToken);
+    Task HandleHtmlReferenceMenuCallbackQuery(CallbackQuery query, CancellationToken cancellationToken);
 }

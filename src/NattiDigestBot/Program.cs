@@ -56,6 +56,7 @@ builder.Services.AddScoped<ICallbackQueryProcessor, CallbackQueryProcessor>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IDigestService, DigestService>();
 
 // The Telegram.Bot library heavily depends on Newtonsoft.Json library to deserialize
 // incoming webhook updates and send serialized responses back.

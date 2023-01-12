@@ -15,18 +15,21 @@ public partial class CommandExecutor : ICommandExecutor
     private readonly ITelegramBotClient _botClient;
     private readonly IAccountService _accountService;
     private readonly ICategoryService _categoryService;
+    private readonly IDigestService _digestService;
 
     public CommandExecutor(
         ITelegramBotClient botClient,
         IAccountService accountService,
         ILogger<CommandExecutor> logger,
-        ICategoryService categoryService
+        ICategoryService categoryService,
+        IDigestService digestService
     )
     {
         _botClient = botClient;
         _accountService = accountService;
         _logger = logger;
         _categoryService = categoryService;
+        _digestService = digestService;
     }
 
     public async Task SendUsage(Message message, CancellationToken cancellationToken)
@@ -55,10 +58,15 @@ public partial class CommandExecutor : ICommandExecutor
         await _botClient.SendReply(userId, HelpMenu.Entrypoint, cancellationToken);
     }
 
-    public Task SendCommandInfo(Message message, CancellationToken cancellationToken)
+    public async Task SendCommandInfo(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
-        throw new NotImplementedException();
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(SendCommandInfo),
+            userId
+        );
     }
 
     public async Task ExitAndSetNormalMode(Message message, CancellationToken cancellationToken)

@@ -5,6 +5,7 @@ public static class CallbackData
     #region Areas
 
     public static string Main { get; } = nameof(Main).ToLower();
+    public static string Html { get; } = nameof(Html).ToLower();
 
     #endregion
 
@@ -17,6 +18,7 @@ public static class CallbackData
     public static string AccountId { get; set; } = nameof(AccountId).ToLower();
     public static string DeleteAccountPropmt { get; set; } = nameof(DeleteAccountPropmt).ToLower();
     public static string DeleteAccountConfirm { get; set; } = nameof(DeleteAccountConfirm).ToLower();
+    public static string Reference { get; set; } = nameof(Reference).ToLower();
     public static string Back { get; set; } = nameof(Back).ToLower();
 
     #endregion
