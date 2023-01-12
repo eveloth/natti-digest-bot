@@ -4,8 +4,8 @@ namespace NattiDigestBot.Services.DbServices;
 
 public interface ICategoryService
 {
-    Task<IEnumerable<Category>> GetAll(CancellationToken cancellationToken);
-    Task Create(Category category, CancellationToken cancellationToken);
-    Task Update(Category category, CancellationToken cancellationToken);
-    Task Delete(int id, CancellationToken cancellationToken);
+    Task<IEnumerable<Category>> GetAll(long accountId, CancellationToken cancellationToken);
+    Task<bool> Create(Category category, CancellationToken cancellationToken);
+    Task<bool> Update(Category category, CancellationToken cancellationToken);
+    Task<bool> Delete(int id, long aacountId, CancellationToken cancellationToken);
 }

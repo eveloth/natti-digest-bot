@@ -21,7 +21,7 @@ public static class GeneralReplies
                 "Что-то на эльфийском, не могу прочесть...\n\n"
                 + "Чтобы узнать, как пользоваться ботом, напиши /help, "
                 + "а чтобы получить информацию о любой команде — /info <i>команда</i>, "
-                + "например: \n\n\\/info /conmirm",
+                + "например: \n\n/info /confirm",
             ParseMode = ParseMode.Html
         };
 

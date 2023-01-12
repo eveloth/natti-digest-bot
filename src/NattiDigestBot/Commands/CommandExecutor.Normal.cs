@@ -1,7 +1,7 @@
+using NattiDigestBot.Domain;
 using NattiDigestBot.Extensions;
 using NattiDigestBot.Replies;
 using NattiDigestBot.State;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace NattiDigestBot.Commands;
@@ -35,11 +35,7 @@ public partial class CommandExecutor
 
         if (argument is null)
         {
-            await _botClient.SendReply(
-                userId,
-                NormalReplies.NoGroupIdErrorReply,
-                cancellationToken
-            );
+            await _botClient.SendReply(userId, NormalReplies.NoGroupIdReply, cancellationToken);
             return;
         }
 
@@ -132,6 +128,54 @@ public partial class CommandExecutor
             nameof(NewCategory),
             userId
         );
+
+        var arguments = message.GetCommandArguments();
+
+        if (arguments is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoCategoryArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var categoryArguments = arguments.Split(" - ");
+
+        if (
+            categoryArguments.ElementAtOrDefault(0) is not { } keyword
+            || categoryArguments.ElementAtOrDefault(1) is not { } description
+        )
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidCategoryArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var newCategory = new Category
+        {
+            AccountId = userId,
+            Keyword = keyword,
+            Description = description
+        };
+
+        var result = await _categoryService.Create(newCategory, cancellationToken);
+
+        if (!result)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.CategoryKeywordTakenReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        await _botClient.SendReply(userId, NormalReplies.CategoryCreatedRelpy, cancellationToken);
     }
 
     public async Task ShowCategories(Message message, CancellationToken cancellationToken)
@@ -143,17 +187,77 @@ public partial class CommandExecutor
             nameof(ShowCategories),
             userId
         );
+
+        var categories = await _categoryService.GetAll(userId, cancellationToken);
+        var reply = ReplyFactory.CategoriesListReply(categories);
+
+        await _botClient.SendReply(userId, reply, cancellationToken);
     }
 
-    public async Task EditCategory(Message message, CancellationToken cancellationToken)
+    public async Task UpdateCategory(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
 
         _logger.LogInformation(
             "Executing command {Command} for account ID {AccountId}",
-            nameof(EditCategory),
+            nameof(UpdateCategory),
             userId
         );
+
+        var arguments = message.GetCommandArguments();
+
+        if (arguments is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.NoCategoryArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var categoryArguments = arguments.Split(" - ");
+
+        var parsedSuccessfuly = int.TryParse(
+            categoryArguments.ElementAtOrDefault(0),
+            out var categoryId
+        );
+
+        if (
+            !parsedSuccessfuly
+            || categoryArguments.ElementAtOrDefault(1) is not { } keyword
+            || categoryArguments.ElementAtOrDefault(2) is not { } description
+        )
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidCategoryArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var updatedCategory = new Category
+        {
+            AccountId = userId,
+            CategoryId = categoryId,
+            Keyword = keyword,
+            Description = description
+        };
+
+        var result = await _categoryService.Update(updatedCategory, cancellationToken);
+
+        if (!result)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.CategoryNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        await _botClient.SendReply(userId, NormalReplies.CategoryUpdatedRelpy, cancellationToken);
     }
 
     public async Task DeleteCategory(Message message, CancellationToken cancellationToken)
@@ -165,6 +269,34 @@ public partial class CommandExecutor
             nameof(DeleteCategory),
             userId
         );
+
+        var argument = message.GetCommandArguments();
+
+        var parsedSuccessfuly = int.TryParse(argument, out var categoryId);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.CategoryNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var result = await _categoryService.Delete(categoryId, userId, cancellationToken);
+
+        if (!result)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.CategoryNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        await _botClient.SendReply(userId, NormalReplies.CategoryDeletedRelpy, cancellationToken);
     }
 
     public async Task Digest(Message message, CancellationToken cancellationToken)

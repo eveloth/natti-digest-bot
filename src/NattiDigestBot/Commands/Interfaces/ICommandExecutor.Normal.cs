@@ -10,7 +10,7 @@ public partial interface ICommandExecutor
     Task StartConfirmationProcess(Message message, CancellationToken cancellationToken);
     Task NewCategory(Message message, CancellationToken cancellationToken);
     Task ShowCategories(Message message, CancellationToken cancellationToken);
-    Task EditCategory(Message message, CancellationToken cancellationToken);
+    Task UpdateCategory(Message message, CancellationToken cancellationToken);
     Task DeleteCategory(Message message, CancellationToken cancellationToken);
     Task Digest(Message message, CancellationToken cancellationToken);
     Task Preview(Message message, CancellationToken cancellationToken);

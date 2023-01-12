@@ -14,16 +14,19 @@ public partial class CommandExecutor : ICommandExecutor
     private readonly ILogger<CommandExecutor> _logger;
     private readonly ITelegramBotClient _botClient;
     private readonly IAccountService _accountService;
+    private readonly ICategoryService _categoryService;
 
     public CommandExecutor(
         ITelegramBotClient botClient,
         IAccountService accountService,
-        ILogger<CommandExecutor> logger
+        ILogger<CommandExecutor> logger,
+        ICategoryService categoryService
     )
     {
         _botClient = botClient;
         _accountService = accountService;
         _logger = logger;
+        _categoryService = categoryService;
     }
 
     public async Task SendUsage(Message message, CancellationToken cancellationToken)
