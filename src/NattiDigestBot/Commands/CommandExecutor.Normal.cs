@@ -1,4 +1,5 @@
 using NattiDigestBot.Extensions;
+using NattiDigestBot.Replies;
 using NattiDigestBot.State;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,27 +10,27 @@ public partial class CommandExecutor
 {
     public async Task Start(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(Start));
-
-        const string reply =
-            "Привет! Я — бот-помощник, помогаю создавать дайджесты для больших групп.\n\n"
-            + "Среди тысяч сообщений может затеряться что-нибудь интересное, а чтобы этого не произошло, "
-            + "ты можешь воспользоваться моей помощью.\n\n"
-            + "Для того, чтобы начать пользоваться ботом, тебе нужно привязать группу, которую ты администрируешь, "
-            + "подтвердить, что это действительно ты — чтобы никто не мог отправлять в группы спам "
-            + "с помощью дайджестов, и добавить хотя бы одну категорию.\n\n"
-            + "Чтобы узнать подробную информацию обо мне, напиши /help.";
-
         var userId = message.Chat.Id;
 
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Start),
+            userId
+        );
+
+        await _botClient.SendReply(userId, GeneralReplies.StartReply, cancellationToken);
     }
 
     public async Task Bind(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(Bind));
-
         var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Bind),
+            userId
+        );
+
         var argument = message.GetCommandArguments();
 
         if (argument is null)
@@ -72,9 +73,14 @@ public partial class CommandExecutor
 
     public async Task Unbind(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(Unbind));
-
         var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Unbind),
+            userId
+        );
+
         await _accountService.UnbindGroup(userId, cancellationToken);
 
         const string reply = "Теперь группа отвязана от твоего аккаунта.";
@@ -83,9 +89,14 @@ public partial class CommandExecutor
 
     public async Task StartConfirmationProcess(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(StartConfirmationProcess));
-
         var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(StartConfirmationProcess),
+            userId
+        );
+
         var account = await _accountService.Get(userId, cancellationToken);
 
         if (account!.GroupId is null)
@@ -122,60 +133,52 @@ public partial class CommandExecutor
         await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
     }
 
-    public async Task DeleteAccount(Message message, CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Executing command {Command}", nameof(DeleteAccount));
-
-        var userId = message.Chat.Id;
-        var argument = message.GetCommandArguments();
-
-        var parsedSuccessfuly = long.TryParse(argument, out var userIdForConfirmation);
-
-        if (!parsedSuccessfuly)
-        {
-            const string parsingErrorReply =
-                "Хм, не получилось прочесть уникальный идентификатор твоего аккаунта. "
-                + "Пожалуйста, проверь, что всё правильно!";
-
-            await _botClient.SendTextMessageAsync(
-                userId,
-                parsingErrorReply,
-                cancellationToken: cancellationToken
-            );
-
-            return;
-        }
-
-        if (userId != userIdForConfirmation)
-        {
-            const string doesntMatchPeply =
-                "Этот идентификатор не совпадает с идентификатором твоего аккаунта.";
-
-            await _botClient.SendTextMessageAsync(
-                userId,
-                doesntMatchPeply,
-                cancellationToken: cancellationToken
-            );
-
-            return;
-        }
-
-        var account = await _accountService.Get(userId, cancellationToken);
-        StateStorage.DropState(userId, account!.GroupId);
-        await _accountService.Delete(account.AccountId, cancellationToken);
-
-        const string reply =
-            "Твой аккаунт удалён! Чтобы начать всё заново, просто напиши мне любое сообщение. "
-            + "Помни, что после удаления я не храню никакие данные, поэтому привязывать группу, "
-            + "создавать категории и составлять дайджесты нужно будет заново.";
-
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
-    }
-
     public Task Digest(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(Digest));
+        var userId = message.Chat.Id;
 
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Digest),
+            userId
+        );
+
+        throw new NotImplementedException();
+    }
+
+    public Task Preview(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Preview),
+            userId
+        );
+        throw new NotImplementedException();
+    }
+
+    public Task Edit(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Edit),
+            userId
+        );
+        throw new NotImplementedException();
+    }
+
+    public Task Send(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(Send),
+            userId
+        );
         throw new NotImplementedException();
     }
 }

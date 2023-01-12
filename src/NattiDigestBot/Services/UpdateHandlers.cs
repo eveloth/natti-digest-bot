@@ -1,4 +1,5 @@
 using NattiDigestBot.Domain;
+using NattiDigestBot.Replies.Menus;
 using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;
 using Telegram.Bot.Exceptions;
@@ -29,6 +30,8 @@ public class UpdateHandlers
         var handler = update switch
         {
             { Message: { } message } => BotOnMessageReceived(message, cancellationToken),
+            { CallbackQuery: { } callbackQuery }
+                => BotOnCallbackQueryReceived(callbackQuery, cancellationToken),
             _ => UnknownUpdateHandlerAsync(update, cancellationToken)
         };
 
@@ -63,7 +66,7 @@ public class UpdateHandlers
 
             _logger.LogDebug("Trying to confirm group");
 
-            await _commandDispatcher.ReceiveConfirmationFromGroup(message, cancellationToken);
+            await _commandDispatcher.HandleConfirmationFromGroup(message, cancellationToken);
             return;
         }
 
@@ -87,6 +90,26 @@ public class UpdateHandlers
             ChatMode.Edit => _commandDispatcher.HandleEditMode(message, cancellationToken),
             ChatMode.WaitingForConfirmation
                 => _commandDispatcher.HandleWaitingForConfirmationMode(message, cancellationToken),
+            _ => Task.CompletedTask
+        };
+
+        await action;
+    }
+
+    private async Task BotOnCallbackQueryReceived(
+        CallbackQuery callbackQuery,
+        CancellationToken cancellationToken
+    )
+    {
+        if (callbackQuery.From.IsBot)
+            return;
+
+        var callbackHeader = callbackQuery.Data!.Split(':')[0];
+
+        var action = callbackHeader switch
+        {
+            _ when callbackHeader.Equals(CallbackData.Main)
+                => _commandDispatcher.HandleMainMenuCallbackQuery(callbackQuery, cancellationToken),
             _ => Task.CompletedTask
         };
 

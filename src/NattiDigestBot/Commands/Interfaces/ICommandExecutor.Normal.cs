@@ -8,6 +8,8 @@ public partial interface ICommandExecutor
     Task Bind(Message message, CancellationToken cancellationToken);
     Task Unbind(Message message, CancellationToken cancellationToken);
     Task StartConfirmationProcess(Message message, CancellationToken cancellationToken);
-    Task DeleteAccount(Message message, CancellationToken cancellationToken);
     Task Digest(Message message, CancellationToken cancellationToken);
+    Task Preview(Message message, CancellationToken cancellationToken);
+    Task Edit(Message message, CancellationToken cancellationToken);
+    Task Send(Message message, CancellationToken cancellationToken);
 }

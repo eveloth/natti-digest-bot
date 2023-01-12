@@ -52,6 +52,7 @@ builder.Services.AddHostedService<ConfigureWebhook>();
 
 builder.Services.AddScoped<ICommandDispatcher, CommandDispatcher>();
 builder.Services.AddScoped<ICommandExecutor, CommandExecutor>();
+builder.Services.AddScoped<ICallbackQueryProcessor, CallbackQueryProcessor>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 
