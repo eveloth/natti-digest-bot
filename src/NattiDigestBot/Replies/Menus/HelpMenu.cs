@@ -1,146 +1,9 @@
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace NattiDigestBot.Replies.Menus;
 
 public static class HelpMenu
 {
-    private static InlineKeyboardMarkup _entrypointMarkup =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "Как узнать ID группы?",
-                        $"{CallbackData.Main}:{CallbackData.GroupId}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "Как привязать группу?",
-                        $"{CallbackData.Main}:{CallbackData.Bind}"
-                    ),
-                },
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "Про категории",
-                        $"{CallbackData.Main}:{CallbackData.Categories}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "Про дайджесты",
-                        $"{CallbackData.Main}:{CallbackData.Digest}"
-                    ),
-                },
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "ID моего акканута",
-                        $"{CallbackData.Main}:{CallbackData.AccountId}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u274c Удалить аккаунт",
-                        $"{CallbackData.Main}:{CallbackData.DeleteAccountPropmt}"
-                    ),
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _groupIdBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "Как привязать группу?",
-                        $"{CallbackData.Main}:{CallbackData.Bind}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    ),
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _bindBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "Как узнать ID группы?",
-                        $"{CallbackData.GroupId}:{CallbackData.GroupId}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _accountIdBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _categoryBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _digestBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
-    private static InlineKeyboardMarkup _deleteAccountBack =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u274c Удалить \u274c",
-                        $"{CallbackData.Main}:{CallbackData.DeleteAccountConfirm}"
-                    ),
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
     public static Reply Entrypoint { get; } =
         new()
         {
@@ -160,7 +23,7 @@ public static class HelpMenu
                 + "\u2022 Нужна помощь с перевозкой шкафа из Магадана в Лиссабон - <i>ссылка</i>\n\n"
                 + "Ниже ты найдёшь инструкции, которые быстро помогут научиться тебе пользоваться ботом:",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _entrypointMarkup
+            ReplyMarkup = HelpMenuMarkups.EntrypointMarkup
         };
 
     public static Reply GroupIdSection { get; } =
@@ -176,7 +39,7 @@ public static class HelpMenu
                 + "стало: -<b>100</b>987654321\n\n"
                 + "Получилось? Теперь, используя этот ID, ты можешь привязать группу!",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _groupIdBack
+            ReplyMarkup = HelpMenuMarkups.GroupIdBack
         };
 
     public static Reply BindSection { get; } =
@@ -191,7 +54,7 @@ public static class HelpMenu
                 + "когда привяжешь её, появится инструкция по подтверждению. "
                 + "Чтобы отвязать группу, просто введи /unbind.",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _bindBack
+            ReplyMarkup = HelpMenuMarkups.BindBack
         };
 
     public static Reply CategorySection { get; } =
@@ -212,7 +75,7 @@ public static class HelpMenu
                 + "удалить категорию командой:\n/delete_category <i>111</i>\nили изменить её командой\n"
                 + "/update_category <i>111 - коооотики - очень милые КОТИКИ</i>.",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _categoryBack
+            ReplyMarkup = HelpMenuMarkups.CategoryBack
         };
 
     public static Reply DigestSection { get; } =
@@ -250,7 +113,7 @@ public static class HelpMenu
                 + "Помни, что с того момента, как ты сформируешь дайджест командой /make, "
                 + "то всегда сможешь посмотреть его текст с помощью команды /preview <i>01/01/97</i>",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _digestBack
+            ReplyMarkup = HelpMenuMarkups.DigestBack
         };
 
     public static Reply AccountIdSection { get; } =
@@ -258,7 +121,7 @@ public static class HelpMenu
         {
             ReplyText = "DYNAMIC_VALUE_PLACEHOLDER",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _accountIdBack
+            ReplyMarkup = HelpMenuMarkups.AccountIdBack
         };
 
     public static Reply DeleteAccountSection { get; } =
@@ -269,6 +132,6 @@ public static class HelpMenu
                 + "<b>Внимание: вся информация, связанная с твоим аккаунтом, включая привязанную группу, "
                 + "категории и дайджесты, будет удалена, и ты не сможешь её восстановить!</b>",
             ParseMode = ParseMode.Html,
-            ReplyMarkup = _deleteAccountBack
+            ReplyMarkup = HelpMenuMarkups.DeleteAccountBack
         };
 }

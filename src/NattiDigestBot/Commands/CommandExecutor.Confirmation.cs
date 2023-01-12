@@ -1,3 +1,5 @@
+using NattiDigestBot.Extensions;
+using NattiDigestBot.Replies;
 using NattiDigestBot.State;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,27 +11,28 @@ public partial class CommandExecutor
 {
     public async Task ConfirmGroup(Message message, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Executing command {Command}", nameof(ConfirmGroup));
+        var groupId = message.Chat.Id;
+
+        _logger.LogInformation("Attempting to confirm group ID {GroupId}", groupId);
 
         var isAdmin = await SenderIsAdmin(message, cancellationToken);
 
         if (!isAdmin)
         {
             await _botClient.DeleteMessageAsync(
-                message.Chat.Id,
+                groupId,
                 message.MessageId,
                 cancellationToken: cancellationToken
             );
             return;
         }
-        
+
         await _botClient.DeleteMessageAsync(
-            message.Chat.Id,
+            groupId,
             message.MessageId,
             cancellationToken: cancellationToken
         );
 
-        var groupId = message.Chat.Id;
         var userId = StateStorage.GetGroupOwner(groupId);
 
         await _accountService.ConfirmGroupForAccount(userId, cancellationToken);
@@ -37,9 +40,11 @@ public partial class CommandExecutor
         StateStorage.RemoveFromWaitingForConfirmationList(groupId);
         StateStorage.SetChatModeFor(userId, ChatMode.Normal);
 
-        const string reply =
-            "Ура, группа подтверждена! Теперь ты можешь отправлять в неё дайджесты.";
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        await _botClient.SendReply(
+            userId,
+            ConfirmationReplies.GroupConfirmedReply,
+            cancellationToken
+        );
     }
 
     public async Task HandleMessageInConfirmationMode(
@@ -47,15 +52,19 @@ public partial class CommandExecutor
         CancellationToken cancellationToken
     )
     {
+        var userId = message.Chat.Id;
+
         _logger.LogInformation(
-            "Executing command {Command}",
-            nameof(HandleMessageInConfirmationMode)
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(HandleMessageInConfirmationMode),
+            userId
         );
 
-        var userId = message.Chat.Id;
-        const string reply =
-            "Сейчас я жду от тебя подтверждения в группе. Если хочешь отменить подтверждение, напиши /exit.";
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        await _botClient.SendReply(
+            userId,
+            ConfirmationReplies.InteractiveModeAnnouncement,
+            cancellationToken
+        );
     }
 
     private async Task<bool> SenderIsAdmin(Message message, CancellationToken cancellationToken)

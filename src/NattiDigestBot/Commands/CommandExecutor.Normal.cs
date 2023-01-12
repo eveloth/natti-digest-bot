@@ -35,40 +35,36 @@ public partial class CommandExecutor
 
         if (argument is null)
         {
-            const string errorReply = "Пожалуйста, укажи Id твоей группы после команды /bind.";
-            await _botClient.SendTextMessageAsync(
+            await _botClient.SendReply(
                 userId,
-                errorReply,
-                cancellationToken: cancellationToken
+                NormalReplies.NoGroupIdErrorReply,
+                cancellationToken
             );
             return;
         }
 
         var parsedSuccessfuly = long.TryParse(argument, out var groupId);
+        //Group id's can be negative numbers type of long but they have no exact length by contract
+        //and bot is unable to tell if the group actually exists
+        var supposedlyIsGroupId = groupId < 0;
 
-        if (!parsedSuccessfuly)
+        if (!parsedSuccessfuly || !supposedlyIsGroupId)
         {
-            const string parsingErrorReply =
-                "Ой, не могу прочесть Id группы. Пожалуйста, проверь, что Id правильный!";
-
-            await _botClient.SendTextMessageAsync(
+            await _botClient.SendReply(
                 userId,
-                parsingErrorReply,
-                cancellationToken: cancellationToken
+                NormalReplies.GroupIdParsingErrorReply,
+                cancellationToken
             );
             return;
         }
 
-        //TODO: add group id validation
-
         await _accountService.BindGroup(userId, groupId, cancellationToken);
 
-        var reply =
-            "Отлично! Группа привязана, осталось подтвердить, что ты её администратор."
-            + $"Введи команду /confirm, а потом введи её же в группе вот так: /confirm@{StateStorage.BotName}.\n\n"
-            + "Чтобы узнать подробнее, что нужно делать, введи команду /help и посмотри инструкицию "
-            + "для команды /confirm.";
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        await _botClient.SendReply(
+            userId,
+            NormalReplies.GroupBoundReply,
+            cancellationToken: cancellationToken
+        );
     }
 
     public async Task Unbind(Message message, CancellationToken cancellationToken)
@@ -83,8 +79,11 @@ public partial class CommandExecutor
 
         await _accountService.UnbindGroup(userId, cancellationToken);
 
-        const string reply = "Теперь группа отвязана от твоего аккаунта.";
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        await _botClient.SendReply(
+            userId,
+            NormalReplies.GroupUnboundReply,
+            cancellationToken: cancellationToken
+        );
     }
 
     public async Task StartConfirmationProcess(Message message, CancellationToken cancellationToken)
@@ -101,39 +100,74 @@ public partial class CommandExecutor
 
         if (account!.GroupId is null)
         {
-            const string noBoundGroupReply =
-                "Кажется, к твоему аккаунту ещё не привязана группа. Привяжи её с помощью "
-                + "команды /bind, и после этого ты сможешь подтвердить, что ты её администратор.";
-
-            await _botClient.SendTextMessageAsync(
-                userId,
-                noBoundGroupReply,
-                cancellationToken: cancellationToken
-            );
+            await _botClient.SendReply(userId, NormalReplies.GroupIdNotSetReply, cancellationToken);
             return;
         }
 
         if (account.IsGroupConfirmed)
         {
-            const string alreadyConfirmedReply =
-                "Группа уже подтверждена, можешь отправлять в неё дайджесты!";
-
-            await _botClient.SendTextMessageAsync(
+            await _botClient.SendReply(
                 userId,
-                alreadyConfirmedReply,
-                cancellationToken: cancellationToken
+                NormalReplies.GroupAlreadyConfirmedReply,
+                cancellationToken
             );
-
             return;
         }
 
         StateStorage.AddToWaitingForConfirmationList(account.GroupId.Value, account.AccountId);
 
-        const string reply = "Жду от тебя подтверждения в группе!";
-        await _botClient.SendTextMessageAsync(userId, reply, cancellationToken: cancellationToken);
+        await _botClient.SendReply(
+            userId,
+            NormalReplies.WaitingForConfirmationReply,
+            cancellationToken: cancellationToken
+        );
     }
 
-    public Task Digest(Message message, CancellationToken cancellationToken)
+    public async Task NewCategory(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(NewCategory),
+            userId
+        );
+    }
+
+    public async Task ShowCategories(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(ShowCategories),
+            userId
+        );
+    }
+
+    public async Task EditCategory(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(EditCategory),
+            userId
+        );
+    }
+
+    public async Task DeleteCategory(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(DeleteCategory),
+            userId
+        );
+    }
+
+    public async Task Digest(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
 
@@ -142,11 +176,9 @@ public partial class CommandExecutor
             nameof(Digest),
             userId
         );
-
-        throw new NotImplementedException();
     }
 
-    public Task Preview(Message message, CancellationToken cancellationToken)
+    public async Task Preview(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
 
@@ -155,10 +187,9 @@ public partial class CommandExecutor
             nameof(Preview),
             userId
         );
-        throw new NotImplementedException();
     }
 
-    public Task Edit(Message message, CancellationToken cancellationToken)
+    public async Task Edit(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
 
@@ -167,10 +198,9 @@ public partial class CommandExecutor
             nameof(Edit),
             userId
         );
-        throw new NotImplementedException();
     }
 
-    public Task Send(Message message, CancellationToken cancellationToken)
+    public async Task Send(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
 
@@ -179,6 +209,5 @@ public partial class CommandExecutor
             nameof(Send),
             userId
         );
-        throw new NotImplementedException();
     }
 }

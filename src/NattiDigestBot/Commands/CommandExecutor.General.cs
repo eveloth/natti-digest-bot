@@ -6,7 +6,6 @@ using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace NattiDigestBot.Commands;
 
