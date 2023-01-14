@@ -42,6 +42,8 @@ builder.Services.AddScoped<UpdateHandlers>();
 
 builder.Services.AddDbContext<DigestContext>(optionsBuilder =>
 {
+
+    optionsBuilder.UseLazyLoadingProxies();
     optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 

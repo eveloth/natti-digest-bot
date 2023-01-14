@@ -7,7 +7,7 @@ namespace NattiDigestBot.Replies;
 public static class NormalReplies
 {
     public static Reply NoGroupIdReply { get; } =
-        new() { ReplyText = "Пожалуйста, укажи Id твоей группы после команды /bind." };
+        new() { ReplyText = "Пожалуйста, укажи ID твоей группы после команды /bind." };
 
     public static Reply GroupIdParsingErrorReply { get; } =
         new()
@@ -91,7 +91,8 @@ public static class NormalReplies
         {
             ReplyText =
                 "Интерактивный режим создания и редактирования дайджеста включён! \n\n"
-                + "Все сообщения, кроме команд /raw_preview, /delete и /make, я постараюсь записать в дайджест, — "
+                + "Все сообщения, кроме команд /raw_preview, /caterories, /delete и /make, "
+                + "я постараюсь записать в дайджест, — "
                 + "не забудь указать категорию, описание и ссылку. Чтобы выйти из этого режима, "
                 + "дай команду /exit."
         };
@@ -104,7 +105,7 @@ public static class NormalReplies
         {
             ReplyText =
                 "Кажется, дайджест ещё не сформирован — перейди в режим создания дайджеста "
-                + "и дай команду /make, после чего сможешь его отправить."
+                + "и дай команду /make."
         };
 
     public static Reply DigestAlreadySentReply { get; } =

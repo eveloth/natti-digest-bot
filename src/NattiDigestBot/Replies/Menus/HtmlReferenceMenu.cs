@@ -21,7 +21,9 @@ public static class HtmlReferenceMenu
                 + "&lt;tg-spoiler&gt;<tg-spoiler>спойлер</tg-spoiler>&lt;/tg-spoiler&gt;,\n"
                 + "&lt;a href=\"http://www.example.com/\"&gt;"
                 + "<a href=\"http://www.example.com/\">ссылка текстом</a>&lt;/a&gt;,\n"
-                + "&lt;code&gt;<code>моноширинный текст</code>&lt;/code&gt;",
+                + "&lt;code&gt;<code>моноширинный текст</code>&lt;/code&gt;\n\n"
+                + "Если тебе хочется использовать символы, зарезервированные для тегов, то есть &lt; и &gt;, "
+                + "используй вместо них вот такие комбинации букв: &amp;lt; и  &amp;gt;.",
             ReplyMarkup = HtmlReferenceMenuMarkup.HtmlReferenceBack,
             ParseMode = ParseMode.Html
         };

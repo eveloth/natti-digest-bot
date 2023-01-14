@@ -22,7 +22,6 @@ public class DigestService : IDigestService
     )
     {
         return await _context.Digests
-            .AsNoTracking()
             .SingleOrDefaultAsync(
                 d => d.AccountId == accountId && d.Date == date,
                 cancellationToken
@@ -64,6 +63,23 @@ public class DigestService : IDigestService
         );
 
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<DigestEntry?> GetEntry(
+        long accountId,
+        DateOnly date,
+        int entryId,
+        CancellationToken cancellationToken
+    )
+    {
+        var digest = await _context.Digests.SingleOrDefaultAsync(
+            d => d.AccountId == accountId && d.Date == date,
+            cancellationToken
+        );
+
+        var entry = digest?.DigestEntries.SingleOrDefault(e => e.DigestEntryId == entryId);
+
+        return entry;
     }
 
     public async Task AddEntry(DigestEntry entry, CancellationToken cancellationToken)

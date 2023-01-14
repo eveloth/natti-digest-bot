@@ -19,6 +19,7 @@ public static class CallbackData
     public static string DeleteAccountPropmt { get; set; } = nameof(DeleteAccountPropmt).ToLower();
     public static string DeleteAccountConfirm { get; set; } = nameof(DeleteAccountConfirm).ToLower();
     public static string Reference { get; set; } = nameof(Reference).ToLower();
+    public static string PrivateGroups { get; set; } = nameof(PrivateGroups).ToLower();
     public static string Back { get; set; } = nameof(Back).ToLower();
 
     #endregion

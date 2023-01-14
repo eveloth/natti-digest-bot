@@ -32,7 +32,6 @@ public class CommandDispatcher : ICommandDispatcher
         {
             "/start" => _commandExecutor.Start(message, cancellationToken),
             "/help" => _commandExecutor.SendHelp(message, cancellationToken),
-            "/info" => _commandExecutor.SendCommandInfo(message, cancellationToken),
             "/bind" => _commandExecutor.Bind(message, cancellationToken),
             "/unbind" => _commandExecutor.Unbind(message, cancellationToken),
             "/confirm" => _commandExecutor.StartConfirmationProcess(message, cancellationToken),
@@ -44,7 +43,6 @@ public class CommandDispatcher : ICommandDispatcher
             "/preview" => _commandExecutor.Preview(message, cancellationToken),
             "/edit" => _commandExecutor.Edit(message, cancellationToken),
             "/send" => _commandExecutor.Send(message, cancellationToken),
-            "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),
             _ => _commandExecutor.SendUsage(message, cancellationToken)
         };
 
@@ -63,6 +61,7 @@ public class CommandDispatcher : ICommandDispatcher
         var action = command switch
         {
             "/raw_preview" => _commandExecutor.RawPreview(message, cancellationToken),
+            "/categories" => _commandExecutor.ShowCategories(message, cancellationToken),
             "/delete" => _commandExecutor.RemoveEntry(message, cancellationToken),
             "/make" => _commandExecutor.Make(message, cancellationToken),
             "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),
@@ -156,6 +155,8 @@ public class CommandDispatcher : ICommandDispatcher
                 => _callbackQueryProcessor.ShowDeleteAccountPrompt(query, cancellationToken),
             _ when menuSection.Equals(CallbackData.DeleteAccountConfirm)
                 => _callbackQueryProcessor.DeleteAccount(query, cancellationToken),
+            _ when menuSection.Equals(CallbackData.PrivateGroups)
+                => _callbackQueryProcessor.ShowPrivateGroupsInfo(query, cancellationToken),
             _ when menuSection.Equals(CallbackData.Back)
                 => _callbackQueryProcessor.BackToMain(query, cancellationToken),
             _ => Task.CompletedTask

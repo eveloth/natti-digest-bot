@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NattiDigestBot.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NattiDigestBot.Migrations
 {
     [DbContext(typeof(DigestContext))]
-    partial class DigestContextModelSnapshot : ModelSnapshot
+    [Migration("20230114111228_UndoUniqueCategoryKeyword")]
+    partial class UndoUniqueCategoryKeyword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,34 +91,29 @@ namespace NattiDigestBot.Migrations
 
             modelBuilder.Entity("NattiDigestBot.Domain.DigestEntry", b =>
                 {
-                    b.Property<int>("DigestEntryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DigestEntryId"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                    b.Property<long>("DigestId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("DigestId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("DigestEntryId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("MessageLink")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("DigestEntryId");
+                    b.HasKey("DigestId", "Date");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("DigestId", "Date");
 
                     b.ToTable("DigestEntries");
                 });

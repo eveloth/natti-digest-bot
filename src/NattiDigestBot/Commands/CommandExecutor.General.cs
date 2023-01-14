@@ -55,17 +55,17 @@ public partial class CommandExecutor : ICommandExecutor
             userId
         );
 
-        await _botClient.SendReply(userId, HelpMenu.Entrypoint, cancellationToken);
-    }
+        var sentMessage = await _botClient.SendReply(
+            userId,
+            HelpMenu.Entrypoint,
+            cancellationToken
+        );
 
-    public async Task SendCommandInfo(Message message, CancellationToken cancellationToken)
-    {
-        var userId = message.Chat.Id;
-
-        _logger.LogInformation(
-            "Executing command {Command} for account ID {AccountId}",
-            nameof(SendCommandInfo),
-            userId
+        await _botClient.PinChatMessageAsync(
+            userId,
+            sentMessage.MessageId,
+            true,
+            cancellationToken
         );
     }
 

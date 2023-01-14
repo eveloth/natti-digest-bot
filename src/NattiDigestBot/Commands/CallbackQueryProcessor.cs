@@ -146,6 +146,25 @@ public class CallbackQueryProcessor : ICallbackQueryProcessor
         await _botClient.SendReply(userId, GeneralReplies.AccountDeletedReply, cancellationToken);
     }
 
+    public async Task ShowPrivateGroupsInfo(CallbackQuery query, CancellationToken cancellationToken)
+    {
+        var userId = query.From.Id;
+        var messageId = query.Message!.MessageId;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(ShowPrivateGroupsInfo),
+            userId
+        );
+
+        await _botClient.EditReply(
+            userId,
+            messageId,
+            HelpMenu.PrivateGroupsInfoSection,
+            cancellationToken
+        );
+    }
+
     public async Task BackToMain(CallbackQuery query, CancellationToken cancellationToken)
     {
         var userId = query.From.Id;
@@ -171,7 +190,12 @@ public class CallbackQueryProcessor : ICallbackQueryProcessor
             userId
         );
 
-        await _botClient.EditReply(userId, messageId, HtmlReferenceMenu.HtmlReferenceSection, cancellationToken);
+        await _botClient.EditReply(
+            userId,
+            messageId,
+            HtmlReferenceMenu.HtmlReferenceSection,
+            cancellationToken
+        );
     }
 
     public async Task BackToEdit(CallbackQuery query, CancellationToken cancellationToken)
@@ -185,6 +209,11 @@ public class CallbackQueryProcessor : ICallbackQueryProcessor
             userId
         );
 
-        await _botClient.EditReply(userId, messageId, NormalReplies.EnteringEditModeReply, cancellationToken);
+        await _botClient.EditReply(
+            userId,
+            messageId,
+            NormalReplies.EnteringEditModeReply,
+            cancellationToken
+        );
     }
 }

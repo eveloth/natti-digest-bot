@@ -161,8 +161,8 @@ public partial class CommandExecutor
         var newCategory = new Category
         {
             AccountId = userId,
-            Keyword = keyword,
-            Description = description
+            Keyword = keyword.EscpapeHtmlTagClosures(),
+            Description = description.EscpapeHtmlTagClosures()
         };
 
         var result = await _categoryService.Create(newCategory, cancellationToken);
@@ -243,8 +243,8 @@ public partial class CommandExecutor
         {
             AccountId = userId,
             CategoryId = categoryId,
-            Keyword = keyword,
-            Description = description
+            Keyword = keyword.EscpapeHtmlTagClosures(),
+            Description = description.EscpapeHtmlTagClosures()
         };
 
         var result = await _categoryService.Update(updatedCategory, cancellationToken);
@@ -399,7 +399,14 @@ public partial class CommandExecutor
             return;
         }
 
-        var reply = ReplyFactory.DigestPreviewReply(digest);
+        if (digest.DigestText is null)
+        {
+            await _botClient.SendReply(userId, NormalReplies.DigestNotMadeReply, cancellationToken);
+            return;
+        }
+
+        //var reply = ReplyFactory.DigestPreviewReply(digest, ParseMode.Html);
+        var reply = new Reply { ReplyText = digest.DigestText, ParseMode = ParseMode.Html };
         await _botClient.SendReply(userId, reply, cancellationToken);
     }
 
@@ -446,6 +453,12 @@ public partial class CommandExecutor
                 NormalReplies.DigestNotFoundReply,
                 cancellationToken
             );
+            return;
+        }
+
+        if (digest.DigestText is null)
+        {
+            await _botClient.SendReply(userId, NormalReplies.DigestNotMadeReply, cancellationToken);
             return;
         }
 

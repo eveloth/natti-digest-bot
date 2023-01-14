@@ -26,6 +26,22 @@ public class CategoryService : ICategoryService
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Category?> GetByKeyword(
+        long accountId,
+        string keyword,
+        CancellationToken cancellationToken
+    )
+    {
+        return await _context.Categories
+            .AsNoTracking()
+            .SingleAsync(
+                c =>
+                    c.AccountId == accountId
+                    && c.Keyword == keyword,
+                cancellationToken
+            );
+    }
+
     public async Task<bool> Create(Category category, CancellationToken cancellationToken)
     {
         var existingCategory = await _context.Categories.SingleOrDefaultAsync(

@@ -40,6 +40,13 @@ public static class HelpMenuMarkups
                         "\u274c Удалить аккаунт",
                         $"{CallbackData.Main}:{CallbackData.DeleteAccountPropmt}"
                     ),
+                },
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(
+                        "\u2757 О приватных группах",
+                        $"{CallbackData.Main}:{CallbackData.PrivateGroups}"
+                    )
                 }
             }
         );
@@ -58,6 +65,13 @@ public static class HelpMenuMarkups
                         "\u21a9 Назад",
                         $"{CallbackData.Main}:{CallbackData.Back}"
                     ),
+                },
+                new[]
+                {
+                    InlineKeyboardButton.WithCallbackData(
+                        "\u2757 О приватных группах",
+                        $"{CallbackData.Main}:{CallbackData.PrivateGroups}"
+                    )
                 }
             }
         );
@@ -76,39 +90,18 @@ public static class HelpMenuMarkups
                         "\u21a9 Назад",
                         $"{CallbackData.Main}:{CallbackData.Back}"
                     )
-                }
-            }
-        );
-
-    public static InlineKeyboardMarkup AccountIdBack { get; } =
-        new(
-            new[]
-            {
+                },
                 new[]
                 {
                     InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
+                        "\u2757 О приватных группах",
+                        $"{CallbackData.Main}:{CallbackData.PrivateGroups}"
                     )
                 }
             }
         );
 
-    public static InlineKeyboardMarkup CategoryBack { get; } =
-        new(
-            new[]
-            {
-                new[]
-                {
-                    InlineKeyboardButton.WithCallbackData(
-                        "\u21a9 Назад",
-                        $"{CallbackData.Main}:{CallbackData.Back}"
-                    )
-                }
-            }
-        );
-
-    public static InlineKeyboardMarkup DigestBack { get; } =
+    public static InlineKeyboardMarkup Back { get; } =
         new(
             new[]
             {

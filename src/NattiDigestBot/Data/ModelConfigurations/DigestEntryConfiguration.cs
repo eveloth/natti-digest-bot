@@ -18,7 +18,7 @@ public class DigestEntryConfiguration : IEntityTypeConfiguration<DigestEntry>
             .WithMany(d => d.DigestEntries)
             .HasForeignKey(d => d.CategoryId);
 
-        builder.HasKey(d => new { d.DigestId, d.Date });
+        builder.HasKey(d => d.DigestEntryId);
 
         builder.Property(d => d.Description).IsRequired();
         builder.Property(d => d.MessageLink).IsRequired();
