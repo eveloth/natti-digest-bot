@@ -41,30 +41,30 @@ public class UpdateHandlers
     private async Task BotOnMessageReceived(Message message, CancellationToken cancellationToken)
     {
         var chatId = message.Chat.Id;
-        _logger.LogInformation("Received message from chat ID {CharId}", chatId);
 
         if (!MessageIsText(message))
-            return;
-
-        if (MessageIsForwarded(message))
         {
-            _logger.LogDebug("Message was forwarded");
+            _logger.LogInformation("Received message from chat ID {ChatId}", chatId);
             return;
         }
 
-        _logger.LogDebug("{Message}", message.Text!);
+        if (MessageIsForwarded(message))
+        {
+            return;
+        }
+
+        _logger.LogInformation(
+            "Received message from chat ID {ChatId}, text: {MessageText}",
+            chatId,
+            message.Text
+        );
 
         if (!MessageIsFromPrivateChat(message))
         {
-            _logger.LogDebug("Message was not from the private chat");
-
             if (!StateStorage.IsWaitingForConfirmation(chatId))
             {
-                _logger.LogDebug("Group was not in the waiting list");
                 return;
             }
-
-            _logger.LogDebug("Trying to confirm group");
 
             await _commandDispatcher.HandleConfirmationFromGroup(message, cancellationToken);
             return;
@@ -111,7 +111,10 @@ public class UpdateHandlers
             _ when callbackHeader.Equals(CallbackData.Main)
                 => _commandDispatcher.HandleMainMenuCallbackQuery(callbackQuery, cancellationToken),
             _ when callbackHeader.Equals(CallbackData.Html)
-                => _commandDispatcher.HandleHtmlReferenceMenuCallbackQuery(callbackQuery, cancellationToken),
+                => _commandDispatcher.HandleHtmlReferenceMenuCallbackQuery(
+                    callbackQuery,
+                    cancellationToken
+                ),
             _ => Task.CompletedTask
         };
 
