@@ -9,6 +9,7 @@ using NattiDigestBot.Extensions;
 using NattiDigestBot.Services;
 using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;
+using Telegram.Bot.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,9 @@ var botClient = app.Services.GetRequiredService<ITelegramBotClient>();
 var me = botClient.GetMeAsync().Result;
 StateStorage.BotName = me.Username;
 Console.WriteLine($"Setting bot name to: {StateStorage.BotName}");
+
+botClient.SetMyCommandsAsync(BotCommands.PrivateChat, BotCommandScope.AllPrivateChats());
+botClient.SetMyCommandsAsync(BotCommands.AllChats, BotCommandScope.Default());
 
 // Construct webhook route from the Route configuration parameter
 // It is expected that BotController has single method accepting Update
