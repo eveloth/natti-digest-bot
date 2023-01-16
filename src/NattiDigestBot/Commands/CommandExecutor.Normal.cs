@@ -33,6 +33,18 @@ public partial class CommandExecutor
             userId
         );
 
+        var account = await _accountService.Get(userId, cancellationToken);
+
+        if (account!.GroupId is not null)
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.GroupAlreadyBoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
         var argument = message.GetCommandArguments();
 
         if (argument is null)

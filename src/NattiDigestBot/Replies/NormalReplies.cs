@@ -34,6 +34,14 @@ public static class NormalReplies
                 "Кажется, к твоему аккаунту ещё не привязана группа. Привяжи её с помощью команды /bind."
         };
 
+    public static Reply GroupAlreadyBoundReply { get; } =
+        new()
+        {
+            ReplyText =
+                "К твоему аккаунту уже привязана группа. Прежде чем привязать новую, "
+                + "тебе нужно отвязать старую командой /unbind."
+        };
+
     public static Reply GroupAlreadyConfirmedReply { get; } =
         new() { ReplyText = "Группа уже подтверждена, можешь отправлять в неё дайджесты!" };
 
