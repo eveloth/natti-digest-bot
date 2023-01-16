@@ -61,6 +61,8 @@ public partial class CommandExecutor : ICommandExecutor
             cancellationToken
         );
 
+        await _botClient.UnpinAllChatMessages(userId, cancellationToken);
+
         await _botClient.PinChatMessageAsync(
             userId,
             sentMessage.MessageId,
@@ -89,5 +91,28 @@ public partial class CommandExecutor : ICommandExecutor
         StateStorage.SetChatModeFor(userId, ChatMode.Normal);
 
         await _botClient.SendReply(userId, GeneralReplies.ReturningToNormalMode, cancellationToken);
+    }
+
+    public async Task UnsupportedCommand(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(ExitAndSetNormalMode),
+            userId
+        );
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(UnsupportedCommand),
+            userId
+        );
+
+        await _botClient.SendReply(
+            userId,
+            GeneralReplies.UnsupportedCommandReply,
+            cancellationToken
+        );
     }
 }

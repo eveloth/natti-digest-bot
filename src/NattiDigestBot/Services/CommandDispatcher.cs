@@ -43,6 +43,10 @@ public class CommandDispatcher : ICommandDispatcher
             "/preview" => _commandExecutor.Preview(message, cancellationToken),
             "/edit" => _commandExecutor.Edit(message, cancellationToken),
             "/send" => _commandExecutor.Send(message, cancellationToken),
+            "/raw_preview" => _commandExecutor.UnsupportedCommand(message, cancellationToken),
+            "/delete" => _commandExecutor.UnsupportedCommand(message, cancellationToken),
+            "/make" => _commandExecutor.UnsupportedCommand(message, cancellationToken),
+            "/exit" => _commandExecutor.UnsupportedCommand(message, cancellationToken),
             _ => _commandExecutor.SendUsage(message, cancellationToken)
         };
 

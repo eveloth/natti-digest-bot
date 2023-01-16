@@ -479,7 +479,7 @@ public partial class CommandExecutor
 
         await _botClient.SendReply(userId, NormalReplies.EnteringEditModeReply, cancellationToken);
 
-        var reply = ReplyFactory.DigestPreviewReply(digest);
+        var reply = new Reply { ReplyText = digest.DigestText };
         await _botClient.SendReply(userId, reply, cancellationToken);
     }
 

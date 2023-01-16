@@ -2,6 +2,7 @@ using NattiDigestBot.Domain;
 using NattiDigestBot.Replies.Menus;
 using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -13,16 +14,19 @@ public class UpdateHandlers
     private readonly ILogger<UpdateHandlers> _logger;
     private readonly ICommandDispatcher _commandDispatcher;
     private readonly IAccountService _accountService;
+    private readonly ITelegramBotClient _botClient;
 
     public UpdateHandlers(
         ILogger<UpdateHandlers> logger,
         ICommandDispatcher commandDispatcher,
-        IAccountService accountService
+        IAccountService accountService,
+        ITelegramBotClient botClient
     )
     {
         _logger = logger;
         _commandDispatcher = commandDispatcher;
         _accountService = accountService;
+        _botClient = botClient;
     }
 
     public async Task HandleUpdateAsync(Update update, CancellationToken cancellationToken)
@@ -41,10 +45,10 @@ public class UpdateHandlers
     private async Task BotOnMessageReceived(Message message, CancellationToken cancellationToken)
     {
         var chatId = message.Chat.Id;
+        _logger.LogInformation("Received message from chat ID {ChatId}", chatId);
 
         if (!MessageIsText(message))
         {
-            _logger.LogInformation("Received message from chat ID {ChatId}", chatId);
             return;
         }
 
@@ -52,12 +56,6 @@ public class UpdateHandlers
         {
             return;
         }
-
-        _logger.LogInformation(
-            "Received message from chat ID {ChatId}, text: {MessageText}",
-            chatId,
-            message.Text
-        );
 
         if (!MessageIsFromPrivateChat(message))
         {
@@ -121,7 +119,11 @@ public class UpdateHandlers
         await action;
     }
 
-    public Task HandleErrorAsync(Exception exception, CancellationToken cancellationToken)
+    public async Task HandleErrorAsync(
+        Exception exception,
+        Update update,
+        CancellationToken cancellationToken
+    )
     {
         var errorMessage = exception switch
         {
@@ -130,8 +132,17 @@ public class UpdateHandlers
             _ => exception.ToString()
         };
 
+        if (exception is ApiRequestException && exception.Message.Contains("can't parse entities"))
+        {
+            await _botClient.SendTextMessageAsync(
+                update.Message!.Chat.Id,
+                "У меня не получилось отправить тебе текст дайджеста из-за ошибки в HTML-разметке. "
+                    + "Отредактируй дайджест командой /edit и убедись, что все теги закрыты.",
+                cancellationToken: cancellationToken
+            );
+        }
+
         _logger.LogInformation("HandleError: {ErrorMessage}", errorMessage);
-        return Task.CompletedTask;
     }
 
     private static Task UnknownUpdateHandlerAsync(

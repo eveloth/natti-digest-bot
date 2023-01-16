@@ -33,4 +33,7 @@ public static class GeneralReplies
                 "Твой аккаунт удалён! Чтобы начать всё заново, просто напиши мне любое сообщение, "
                 + "например, /start."
         };
+
+    public static Reply UnsupportedCommandReply { get; } =
+        new() { ReplyText = "Эта команда доступна только в интерактивном режиме." };
 }
