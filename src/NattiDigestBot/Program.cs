@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using NattiDigestBot;
@@ -68,6 +69,8 @@ builder.Services.AddScoped<IDigestService, DigestService>();
 builder.Services.AddControllers().AddNewtonsoftJson();
 
 var app = builder.Build();
+
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
 
 var botClient = app.Services.GetRequiredService<ITelegramBotClient>();
 var me = botClient.GetMeAsync().Result;
