@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using NattiDigestBot;
@@ -84,6 +85,13 @@ using (var scope = app.Services.CreateScope())
     var digestContext = scope.ServiceProvider.GetRequiredService<DigestContext>();
     digestContext.Database.Migrate();
 }
+
+app.UseForwardedHeaders(
+    new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    }
+);
 
 // Construct webhook route from the Route configuration parameter
 // It is expected that BotController has single method accepting Update
