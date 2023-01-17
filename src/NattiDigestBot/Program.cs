@@ -44,7 +44,6 @@ builder.Services.AddScoped<UpdateHandlers>();
 
 builder.Services.AddDbContext<DigestContext>(optionsBuilder =>
 {
-
     optionsBuilder.UseLazyLoadingProxies();
     optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
@@ -79,6 +78,12 @@ Console.WriteLine($"Setting bot name to: {StateStorage.BotName}");
 
 botClient.SetMyCommandsAsync(BotCommands.PrivateChat, BotCommandScope.AllPrivateChats());
 botClient.SetMyCommandsAsync(BotCommands.AllChats, BotCommandScope.Default());
+
+using (var scope = app.Services.CreateScope())
+{
+    var digestContext = scope.ServiceProvider.GetRequiredService<DigestContext>();
+    digestContext.Database.Migrate();
+}
 
 // Construct webhook route from the Route configuration parameter
 // It is expected that BotController has single method accepting Update
