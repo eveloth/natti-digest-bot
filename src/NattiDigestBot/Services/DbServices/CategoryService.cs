@@ -60,14 +60,14 @@ public class CategoryService : ICategoryService
         }
 
         await _context.Categories.AddAsync(category, cancellationToken);
-
+        await _context.SaveChangesAsync(cancellationToken);
+        
         _logger.LogInformation(
             "Creating a category ID {CategoryId} for account ID {AccountId}",
             category.CategoryId,
             category.AccountId
         );
 
-        await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
 

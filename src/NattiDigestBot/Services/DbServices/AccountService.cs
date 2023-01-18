@@ -25,8 +25,8 @@ public class AccountService : IAccountService
     public async Task Create(Account account, CancellationToken cancellationToken)
     {
         await _context.Accounts.AddAsync(account, cancellationToken);
-        _logger.LogInformation("Creating an account ID {AccountId}", account.AccountId);
         await _context.SaveChangesAsync(cancellationToken);
+        _logger.LogInformation("Creating an account ID {AccountId}", account.AccountId);
     }
 
     public async Task BindGroup(long accountId, long groupId, CancellationToken cancellationToken)

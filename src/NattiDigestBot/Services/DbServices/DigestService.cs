@@ -31,14 +31,12 @@ public class DigestService : IDigestService
     public async Task Create(Digest digest, CancellationToken cancellationToken)
     {
         await _context.Digests.AddAsync(digest, cancellationToken);
-
+        await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation(
             "Creating digest as of {Date} for account ID {AccountId}",
             digest.Date,
             digest.AccountId
         );
-
-        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task Update(Digest digest, CancellationToken cancellationToken)
@@ -90,6 +88,7 @@ public class DigestService : IDigestService
         );
 
         digest!.DigestEntries.Add(entry);
+        await _context.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation(
             "Adding an entry ID {EntryId} to the digest as of {Date} for account ID {AccountId}",
@@ -97,8 +96,6 @@ public class DigestService : IDigestService
             digest.Date,
             digest.AccountId
         );
-
-        await _context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> DeleteEntry(DigestEntry entry, CancellationToken cancellationToken)

@@ -8,21 +8,34 @@ using NattiDigestBot.Commands.Interfaces;
 using NattiDigestBot.Controllers;
 using NattiDigestBot.Data;
 using NattiDigestBot.Extensions;
+using NattiDigestBot.Options;
 using NattiDigestBot.Services;
 using NattiDigestBot.Services.DbServices;
 using NattiDigestBot.State;
+using Serilog;
+using Serilog.Events;
 using Telegram.Bot.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+var seqOptions = new SeqOptions();
+builder.Configuration.Bind(nameof(seqOptions), seqOptions);
+
+Log.Logger = new LoggerConfiguration().ReadFrom
+    .Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .WriteTo.Seq(seqOptions.Url, apiKey: seqOptions.ApiKey)
+    .WriteTo.Console()
+    .CreateLogger();
 
 // Setup Bot configuration
 var botConfigurationSection = builder.Configuration.GetSection(BotConfiguration.Configuration);
 builder.Services.Configure<BotConfiguration>(botConfigurationSection);
 
 var botConfiguration = botConfigurationSection.Get<BotConfiguration>();
+
+builder.Host.UseSerilog();
 
 // Register named HttpClient to get benefits of IHttpClientFactory
 // and consume it with ITelegramBotClient typed client.
@@ -75,7 +88,7 @@ CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
 var botClient = app.Services.GetRequiredService<ITelegramBotClient>();
 var me = botClient.GetMeAsync().Result;
 StateStorage.BotName = me.Username;
-Console.WriteLine($"Setting bot name to: {StateStorage.BotName}");
+Log.Information("Setting bot name to: {BotName}", StateStorage.BotName);
 
 botClient.SetMyCommandsAsync(BotCommands.PrivateChat, BotCommandScope.AllPrivateChats());
 botClient.SetMyCommandsAsync(BotCommands.AllChats, BotCommandScope.Default());
@@ -92,6 +105,8 @@ app.UseForwardedHeaders(
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
     }
 );
+
+app.UseSerilogRequestLogging();
 
 // Construct webhook route from the Route configuration parameter
 // It is expected that BotController has single method accepting Update
