@@ -73,7 +73,7 @@ SEQOPTIONS__APIKEY='' -- API-ключ Seq
 ## Дополнительная информация
 
 - Туториал по [nginx](https://www.freecodecamp.org/news/the-nginx-handbook/)
-- Про использование [веб-хуков]([https://core.telegram.org/bots/webhooks](https://core.telegram.org/bots/webhooks))
+- Про использование [веб-хуков](https://core.telegram.org/bots/webhooks)
 - Использование [локального сервера](https://core.telegram.org/bots/api#using-a-local-bot-api-server) TgBot API
 
 ---
