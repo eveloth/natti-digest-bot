@@ -1,5 +1,4 @@
 using System.Text;
-using Microsoft.Extensions.Primitives;
 using NattiDigestBot.Domain;
 using Telegram.Bot.Types.Enums;
 
@@ -15,9 +14,9 @@ public static class ReplyFactory
         {
             sb.Append($"\u2733 ({category.CategoryId}) ");
             sb.Append($"<b>{category.Keyword}</b>");
-            sb.Append("\n");
+            sb.Append('\n');
             sb.Append(category.Description);
-            sb.Append("\n");
+            sb.Append('\n');
         }
 
         var replyText = sb.ToString();
@@ -44,15 +43,17 @@ public static class ReplyFactory
         foreach (var entryGroup in entries)
         {
             var category = entryGroup.First().Category;
-            sb.Append($"<b>{category.Description}</b>:\n");
+            sb.Append($"<b>{category.Description}</b>:\n\n");
 
             foreach (var entry in entryGroup)
             {
                 sb.Append($"\u2733 {entry.Description} - {entry.MessageLink}\n");
             }
 
-            sb.Append("\n");
+            sb.Append('\n');
         }
+
+        sb.Append("#дайджест #digest");
 
         var replyText = sb.ToString();
 
@@ -75,7 +76,7 @@ public static class ReplyFactory
         foreach (var entryGroup in entries)
         {
             var category = entryGroup.First().Category;
-            sb.Append($"<b>{category.Keyword}</b>:\n");
+            sb.Append($"<b>{category.Keyword}</b>:\n\n");
 
             foreach (var entry in entryGroup)
             {
