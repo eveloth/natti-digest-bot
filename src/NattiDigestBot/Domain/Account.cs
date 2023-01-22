@@ -7,4 +7,5 @@ public class Account
     public bool IsGroupConfirmed { get; set; }
     public virtual List<Category> Categories { get; set; }
     public virtual List<Digest> Digests { get; set; }
+    public int? PinnedDigestMessageId { get; set; }
 }

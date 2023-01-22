@@ -9,5 +9,6 @@ public interface IAccountService
     Task BindGroup(long accountId, long groupId, CancellationToken cancellationToken);
     Task UnbindGroup(long id, CancellationToken cancellationToken);
     Task ConfirmGroupForAccount(long id, CancellationToken cancellationToken);
+    Task SetPinnedDigest(long accountId, int messageId, CancellationToken cancellationToken);
     Task Delete(long id, CancellationToken cancellationToken);
 }

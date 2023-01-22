@@ -81,6 +81,27 @@ public class AccountService : IAccountService
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task SetPinnedDigest(
+        long accountId,
+        int messageId,
+        CancellationToken cancellationToken
+    )
+    {
+        var account = await _context.Accounts.SingleAsync(
+            x => x.AccountId == accountId,
+            cancellationToken
+        );
+        account.PinnedDigestMessageId = messageId;
+
+        _logger.LogInformation(
+            "Setting pinned digest message ID {MessageId} for account ID {AccountId}",
+            account.PinnedDigestMessageId,
+            account.AccountId
+        );
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task Delete(long id, CancellationToken cancellationToken)
     {
         var account = await _context.Accounts.SingleOrDefaultAsync(

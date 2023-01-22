@@ -557,16 +557,35 @@ public partial class CommandExecutor
             return;
         }
 
-        await _botClient.SendTextMessageAsync(
+        await _botClient.SendReply(userId, NormalReplies.DigestSentReply, cancellationToken);
+
+        var sentMessage = await _botClient.SendTextMessageAsync(
             groupId,
             digestText,
             parseMode: ParseMode.Html,
             cancellationToken: cancellationToken
         );
+        var sentDigestMessageId = sentMessage.MessageId;
+
+        if (account.PinnedDigestMessageId is not null)
+        {
+            await _botClient.UnpinChatMessageAsync(
+                groupId,
+                account.PinnedDigestMessageId,
+                cancellationToken: cancellationToken
+            );
+        }
+
+        await _botClient.PinChatMessageAsync(
+            groupId,
+            sentDigestMessageId,
+            cancellationToken: cancellationToken
+        );
 
         digest.IsSent = true;
-        await _digestService.Update(digest, cancellationToken);
+        account.PinnedDigestMessageId = sentDigestMessageId;
 
-        await _botClient.SendReply(userId, NormalReplies.DigestSentReply, cancellationToken);
+        await _digestService.Update(digest, cancellationToken);
+        await _accountService.SetPinnedDigest(userId, sentDigestMessageId, cancellationToken);
     }
 }
