@@ -142,7 +142,7 @@ public class UpdateHandlers
             );
         }
 
-        _logger.LogInformation("HandleError: {ErrorMessage}", errorMessage);
+        _logger.LogError("HandleError: {ErrorMessage}", errorMessage);
     }
 
     private static Task UnknownUpdateHandlerAsync(
