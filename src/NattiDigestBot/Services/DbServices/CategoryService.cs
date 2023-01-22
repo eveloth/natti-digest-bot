@@ -91,6 +91,7 @@ public class CategoryService : ICategoryService
 
         existingCategory.Keyword = category.Keyword;
         existingCategory.Description = category.Description;
+        existingCategory.DisplayOrder = category.DisplayOrder;
 
         _logger.LogInformation(
             "Updating a category ID {CategoryId} for account ID {AccountId}",

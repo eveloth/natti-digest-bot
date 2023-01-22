@@ -170,11 +170,29 @@ public partial class CommandExecutor
             return;
         }
 
+        var categoryDisplayOrderArgument = categoryArguments.ElementAtOrDefault(2);
+
+        var displayOrder = 0;
+
+        if (
+            categoryDisplayOrderArgument is not null
+            && !int.TryParse(categoryDisplayOrderArgument, out displayOrder)
+        )
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidCategoryDisplayOrder,
+                cancellationToken
+            );
+            return;
+        }
+
         var newCategory = new Category
         {
             AccountId = userId,
             Keyword = keyword.EscpapeHtmlTagClosures(),
-            Description = description.EscpapeHtmlTagClosures()
+            Description = description.EscpapeHtmlTagClosures(),
+            DisplayOrder = displayOrder
         };
 
         var result = await _categoryService.Create(newCategory, cancellationToken);
@@ -251,12 +269,30 @@ public partial class CommandExecutor
             return;
         }
 
+        var categoryDisplayOrderArgument = categoryArguments.ElementAtOrDefault(3);
+
+        var displayOrder = 0;
+
+        if (
+            categoryDisplayOrderArgument is not null
+            && !int.TryParse(categoryDisplayOrderArgument, out displayOrder)
+        )
+        {
+            await _botClient.SendReply(
+                userId,
+                NormalReplies.InvalidCategoryDisplayOrder,
+                cancellationToken
+            );
+            return;
+        }
+
         var updatedCategory = new Category
         {
             AccountId = userId,
             CategoryId = categoryId,
             Keyword = keyword.EscpapeHtmlTagClosures(),
-            Description = description.EscpapeHtmlTagClosures()
+            Description = description.EscpapeHtmlTagClosures(),
+            DisplayOrder = displayOrder
         };
 
         var result = await _categoryService.Update(updatedCategory, cancellationToken);

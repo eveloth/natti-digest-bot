@@ -75,6 +75,12 @@ public static class NormalReplies
                 "Кажется, это ключевое слово уже занято. Пожалуйста, выбери другое и попробуй снова!"
         };
 
+    public static Reply InvalidCategoryDisplayOrder { get; } =
+        new()
+        {
+            ReplyText = "Не получилось прочесть порядок отображения категории — это может быть только число."
+        };
+
     public static Reply CategoryCreatedRelpy { get; } = new() { ReplyText = "Категория создана!" };
 
     public static Reply CategoryUpdatedRelpy { get; } =

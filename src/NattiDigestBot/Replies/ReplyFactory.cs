@@ -10,12 +10,17 @@ public static class ReplyFactory
     {
         var sb = new StringBuilder("Список твоих категорий:\n\n");
 
-        foreach (var category in categories)
+        var orderedCategories = categories.OrderBy(x => x.DisplayOrder == 0);
+
+        foreach (var category in orderedCategories)
         {
             sb.Append($"\u2733 ({category.CategoryId}) ");
-            sb.Append($"<b>{category.Keyword}</b>");
+            sb.Append($"<b>{category.Keyword}</b> \u2733");
             sb.Append('\n');
-            sb.Append(category.Description);
+            sb.Append($"Описание: {category.Description}");
+            sb.Append('\n');
+            sb.Append($"Порядок отображения: {category.DisplayOrder}");
+            sb.Append('\n');
             sb.Append('\n');
         }
 
@@ -38,7 +43,9 @@ public static class ReplyFactory
             return new Reply { ReplyText = emptyDigestReply, ParseMode = ParseMode.Html };
         }
 
-        var entries = digest.DigestEntries.GroupBy(c => c.CategoryId);
+        var entries = digest.DigestEntries
+            .GroupBy(c => new { c.Category.CategoryId, c.Category.DisplayOrder })
+            .OrderBy(x => x.Key.DisplayOrder == 0);
 
         foreach (var entryGroup in entries)
         {
@@ -71,7 +78,10 @@ public static class ReplyFactory
 
             return new Reply { ReplyText = emptyDigestReply, ParseMode = ParseMode.Html };
         }
-        var entries = digest.DigestEntries.GroupBy(c => c.CategoryId);
+
+        var entries = digest.DigestEntries
+            .GroupBy(c => new { c.Category.CategoryId, c.Category.DisplayOrder })
+            .OrderBy(x => x.Key.DisplayOrder == 0);
 
         foreach (var entryGroup in entries)
         {
