@@ -160,7 +160,10 @@ public class UpdateHandlers
 
     private static bool MessageIsForwarded(Message message)
     {
-        return message.ForwardFrom is not null;
+        return message.ForwardFrom is not null
+            || message.ForwardFromChat is not null
+            || message.ForwardFromMessageId is not null
+            || message.ForwardDate is not null;
     }
 
     private static bool MessageIsFromPrivateChat(Message message)
