@@ -84,7 +84,7 @@ public static class HelpMenuMarkups
                 {
                     InlineKeyboardButton.WithCallbackData(
                         "Как узнать ID группы?",
-                        $"{CallbackData.GroupId}:{CallbackData.GroupId}"
+                        $"{CallbackData.Main}:{CallbackData.GroupId}"
                     ),
                     InlineKeyboardButton.WithCallbackData(
                         "\u21a9 Назад",
