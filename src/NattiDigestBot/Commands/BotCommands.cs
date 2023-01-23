@@ -39,7 +39,7 @@ public static class BotCommands
             new BotCommand
             {
                 Command = "edit",
-                Description = "Отредактировать текст дайджеста (требуется дата)"
+                Description = "Отредактировать текст дайджеста или сообщение из дайджеста"
             },
             new BotCommand { Command = "send", Description = "Отправить дайджест (требуется дата" },
             new BotCommand { Command = "exit", Description = "Выйти из интерактивного режима" },
