@@ -98,6 +98,35 @@ public class DigestService : IDigestService
         );
     }
 
+    public async Task<bool> UpdateEntry(DigestEntry entry, CancellationToken cancellationToken)
+    {
+        var digest = await _context.Digests.SingleOrDefaultAsync(
+            d => d.AccountId == entry.DigestId && d.Date == entry.Date,
+            cancellationToken
+        );
+
+        var entryToUpdate = digest!.DigestEntries.Find(e => e.DigestEntryId == entry.DigestEntryId);
+
+        if (entryToUpdate is null)
+        {
+            return false;
+        }
+
+        entryToUpdate.CategoryId = entry.CategoryId;
+        entryToUpdate.Description = entry.Description;
+        entryToUpdate.MessageLink = entry.MessageLink;
+
+        _logger.LogInformation(
+            "Updating an entry ID {EntryId} in the digest as of {Date} for account ID {AccountId}",
+            entry.DigestEntryId,
+            digest.Date,
+            digest.AccountId
+        );
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
     public async Task<bool> DeleteEntry(DigestEntry entry, CancellationToken cancellationToken)
     {
         var digest = await _context.Digests.SingleOrDefaultAsync(

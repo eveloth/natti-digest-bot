@@ -26,18 +26,21 @@ public static class DigestReplies
         };
 
     public static Reply NoEntryArgumentReply { get; } =
-        new() { ReplyText = "Пожалуйста, укажи ID сообщения, которое хочешь удалить." };
+        new() { ReplyText = "Пожалуйста, укажи ID сообщения." };
 
     public static Reply EntryDeletedReply { get; } =
         new() { ReplyText = "Сообщение удалено из дайджеста!" };
+
+    public static Reply EntryUpdatedReply { get; } =
+        new() { ReplyText = "Сообщение обновлено!" };
 
     public static Reply EntryNotFoundReply { get; } =
         new()
         {
             ReplyText =
-                "Не получилось удалить сообщение. "
+                "Не получилось найти сообщение. "
                 + "Убедись, что его ID указан правильно, посмотреть ID можно "
-                + "с поиощью команды /raw_preview."
+                + "с помощью команды /raw_preview."
         };
 
     public static Reply DigestMadeReply { get; } =

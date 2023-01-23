@@ -66,6 +66,7 @@ public class CommandDispatcher : ICommandDispatcher
         {
             "/raw_preview" => _commandExecutor.RawPreview(message, cancellationToken),
             "/categories" => _commandExecutor.ShowCategories(message, cancellationToken),
+            "/edit" => _commandExecutor.UpdateEntry(message, cancellationToken),
             "/delete" => _commandExecutor.RemoveEntry(message, cancellationToken),
             "/make" => _commandExecutor.Make(message, cancellationToken),
             "/exit" => _commandExecutor.ExitAndSetNormalMode(message, cancellationToken),

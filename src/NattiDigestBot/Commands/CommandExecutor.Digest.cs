@@ -66,6 +66,87 @@ public partial class CommandExecutor : ICommandExecutor
         await _botClient.SendReply(userId, DigestReplies.EntryAddedReply, cancellationToken);
     }
 
+    public async Task UpdateEntry(Message message, CancellationToken cancellationToken)
+    {
+        var userId = message.Chat.Id;
+
+        _logger.LogInformation(
+            "Executing command {Command} for account ID {AccountId}",
+            nameof(UpdateEntry),
+            userId
+        );
+
+        var firstLine = message.Text!.Split('\n')[0];
+        var argument = firstLine.Split(' ').ElementAtOrDefault(1);
+
+        if (argument is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                DigestReplies.NoEntryArgumentReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var parsedSuccessfuly = int.TryParse(argument, out var entryId);
+
+        if (!parsedSuccessfuly)
+        {
+            await _botClient.SendReply(userId, DigestReplies.EntryNotFoundReply, cancellationToken);
+            return;
+        }
+
+        var digestDate = StateStorage.GetCurrentDigestDate(userId);
+
+        var entry = await _digestService.GetEntry(userId, digestDate, entryId, cancellationToken);
+
+        if (entry is null)
+        {
+            await _botClient.SendReply(userId, DigestReplies.EntryNotFoundReply, cancellationToken);
+            return;
+        }
+
+        var parsedEntry = message.Text!.Split('\n');
+
+        var categoryKeyword = parsedEntry.ElementAtOrDefault(1);
+        var entryDescrition = parsedEntry.ElementAtOrDefault(2);
+        var messageLink = parsedEntry.ElementAtOrDefault(3);
+
+        if (categoryKeyword is null || entryDescrition is null || messageLink is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                DigestReplies.ErrorParsingEntryReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        var category = await _categoryService.GetByKeyword(
+            userId,
+            categoryKeyword,
+            cancellationToken
+        );
+
+        if (category is null)
+        {
+            await _botClient.SendReply(
+                userId,
+                DigestReplies.CatergoryNotFoundReply,
+                cancellationToken
+            );
+            return;
+        }
+
+        entry.Category = category;
+        entry.Description = entryDescrition;
+        entry.MessageLink = messageLink;
+
+        await _digestService.UpdateEntry(entry, cancellationToken);
+        await _botClient.SendReply(userId, DigestReplies.EntryUpdatedReply, cancellationToken);
+    }
+
     public async Task RemoveEntry(Message message, CancellationToken cancellationToken)
     {
         var userId = message.Chat.Id;
