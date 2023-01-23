@@ -6,5 +6,5 @@ public class Digest
     public DateOnly Date { get; set; }
     public string? DigestText { get; set; }
     public bool IsSent { get; set; }
-    public virtual List<DigestEntry> DigestEntries { get; set; }
+    public virtual List<DigestEntry> DigestEntries { get; set; } = default!;
 }
