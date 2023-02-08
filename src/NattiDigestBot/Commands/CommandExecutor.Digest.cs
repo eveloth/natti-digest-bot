@@ -109,11 +109,7 @@ public partial class CommandExecutor : ICommandExecutor
 
         var parsedEntry = message.Text!.Split('\n');
 
-        var categoryKeyword = parsedEntry.ElementAtOrDefault(1);
-        var entryDescrition = parsedEntry.ElementAtOrDefault(2);
-        var messageLink = parsedEntry.ElementAtOrDefault(3);
-
-        if (categoryKeyword is null || entryDescrition is null || messageLink is null)
+        if (parsedEntry.Any(string.IsNullOrEmpty))
         {
             await _botClient.SendReply(
                 userId,
@@ -122,6 +118,10 @@ public partial class CommandExecutor : ICommandExecutor
             );
             return;
         }
+
+        var categoryKeyword = parsedEntry[1];
+        var entryDescrition = parsedEntry[2];
+        var messageLink = parsedEntry[3];
 
         var category = await _categoryService.GetByKeyword(
             userId,

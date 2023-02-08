@@ -34,7 +34,7 @@ public class CategoryService : ICategoryService
     {
         return await _context.Categories
             .AsNoTracking()
-            .SingleAsync(
+            .SingleOrDefaultAsync(
                 c =>
                     c.AccountId == accountId
                     && c.Keyword == keyword,
