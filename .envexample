@@ -4,6 +4,7 @@
 BOT_PORT=6000
 # POSTGRES_HOST='127.0.0.1'
 POSTGRES_PORT=5433
+POSTGRES_INSTANCE_NAME='postgres-digest-bot'
 
 # DATABASE
 
@@ -13,7 +14,7 @@ PG_PASS=''
 
 # OVERRIDE appsettings.json
 
-CONNECTIONSTRINGS__DEFAULT="Server=postgres-digest-bot;Port=5432;Database=${PG_DB};User Id=${PG_USER};Password=${PG_PASS};"
+CONNECTIONSTRINGS__DEFAULT="Server=${POSTGRES_INSTANCE_NAME};Port=5432;Database=${PG_DB};User Id=${PG_USER};Password=${PG_PASS};"
 
 # LOGGING
 
