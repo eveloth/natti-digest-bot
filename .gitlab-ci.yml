@@ -12,7 +12,7 @@ variables:
   INITIALIZE_ENV: >-
     sed -i "/PG_PASS/s/''/'$PG_PASS'/" .env &&
     sed -i "/POSTGRES_PORT/s/[0-9]\+/$POSTGRES_PORT/" .env &&
-    sed -i "/POSTGRES_INSTANCE_NAME/s/[0-9]\+/$POSTGRES_INSTANCE_NAME/" .env &&
+    sed -i "/POSTGRES_INSTANCE_NAME/s/'.*'/$POSTGRES_INSTANCE_NAME/" .env &&
     sed -i "/BOT_PORT/s/[0-9]\+/$BOT_PORT/" .env &&
     sed -i "/SEQOPTIONS__URL/s/'.*'/'$SEQ_URL'/" .env &&
     sed -i "/SEQOPTIONS__APIKEY/s/'.*'/'$SEQ_APIKEY'/" .env &&
