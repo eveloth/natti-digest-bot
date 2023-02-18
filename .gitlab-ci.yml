@@ -4,7 +4,6 @@ stages:
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
-  COMPOSE_FILE: docker-compose-ci-staging.yml
   RENAME_FILES: >-
     mv -v .envexample .env &&
     mv -v .env.botexample .env.bot &&
@@ -23,7 +22,7 @@ variables:
 workflow:
   name: "Pipeline for branch: $CI_COMMIT_BRANCH"
   rules:
-    - if: $CI_COMMIT_BRANCH == "devel"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 build-job:       
   stage: build
@@ -32,7 +31,7 @@ build-job:
     - echo "Logging into registry as $CI_DEPLOY_USER"
     - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
   script:
-    - docker buildx build --pull --no-cache --platform linux/amd64 --file ./src/NattiDigestBot/arm64.Dockerfile -t $IMAGE_TAG ./src/NattiDigestBot/
+    - docker buildx build --pull --platform linux/amd64 --file ./src/NattiDigestBot/arm64.Dockerfile -t $IMAGE_TAG ./src/NattiDigestBot/
     - docker push $IMAGE_TAG
 
 deploy-job:
