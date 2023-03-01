@@ -1,0 +1,36 @@
+version: '3.8'
+
+networks:
+  local-digestbot-staging:
+    name: local-digestbot-staging
+
+services:
+  natti-chat-bot:
+    container_name: natti-digest-bot-staging
+    image: registry.gitlab.com/eveloth/natti-digest-bot:latest
+    restart: unless-stopped
+    ports:
+      - "${BOT_HOST:-127.0.0.1}:${BOT_PORT}:80"
+    depends_on:
+      - "postgres"
+    networks:
+      - local-digestbot-staging
+    env_file:
+      - .env
+      - .env.bot
+
+  postgres:
+    container_name: postgres-digest-bot-staging
+    image: postgres:15
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_HOST:-127.0.0.1}:${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: "${PG_DB:-natti_digest_bot_db}"
+      POSTGRES_USER: "${PG_USER}"
+      POSTGRES_PASSWORD: "${PG_PASS}"
+      PGDATA: "/var/lib/pgsql/data"
+    volumes:
+      - /opt/natti-digest-bot-staging/pgsql/data:/var/lib/pgsql/data
+    networks:
+      - local-digestbot-staging
