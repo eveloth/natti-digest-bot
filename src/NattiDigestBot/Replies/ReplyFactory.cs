@@ -10,7 +10,9 @@ public static class ReplyFactory
     {
         var sb = new StringBuilder("Список твоих категорий:\n\n");
 
-        var orderedCategories = categories.OrderBy(x => x.DisplayOrder == 0);
+        var orderedCategories = categories
+            .OrderBy(x => x.DisplayOrder == 0)
+            .ThenBy(x => x.DisplayOrder);
 
         foreach (var category in orderedCategories)
         {
@@ -45,7 +47,8 @@ public static class ReplyFactory
 
         var entries = digest.DigestEntries
             .GroupBy(c => new { c.Category.CategoryId, c.Category.DisplayOrder })
-            .OrderBy(x => x.Key.DisplayOrder == 0);
+            .OrderBy(x => x.Key.DisplayOrder == 0)
+            .ThenBy(x => x.Key.DisplayOrder);
 
         foreach (var entryGroup in entries)
         {
