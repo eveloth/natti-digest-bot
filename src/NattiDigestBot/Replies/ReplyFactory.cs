@@ -84,7 +84,8 @@ public static class ReplyFactory
 
         var entries = digest.DigestEntries
             .GroupBy(c => new { c.Category.CategoryId, c.Category.DisplayOrder })
-            .OrderBy(x => x.Key.DisplayOrder == 0);
+            .OrderBy(x => x.Key.DisplayOrder == 0)
+            .ThenBy(x => x.Key.DisplayOrder);
 
         foreach (var entryGroup in entries)
         {
