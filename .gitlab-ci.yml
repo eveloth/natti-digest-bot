@@ -15,8 +15,8 @@ variables:
     sed -i "/BOT_PORT/s/[0-9]\+/$BOT_PORT/" .env &&
     sed -i "/SEQOPTIONS__URL/s/'.*'/'$SEQ_URL'/" .env &&
     sed -i "/SEQOPTIONS__APIKEY/s/'.*'/'$SEQ_APIKEY'/" .env &&
-    sed -i "/SEQOPTIONS__ENABLEFILE/s/'.*'/'$SEQOPTIONS_ENABLEFILE'/" .env &&
-    sed -i "/SEQOPTIONS__ENABLESEQ/s/'.*'/'$SEQOPTIONS_ENABLESEQ'/" .env &&
+    sed -i "/SERILOGOPTIONS__ENABLEFILE/s/'.*'/'$SERILOGOPTIONS_ENABLEFILE'/" .env &&
+    sed -i "/SERILOGOPTIONS__ENABLESEQ/s/'.*'/'$SERILOGOPTIONS_ENABLESEQ'/" .env &&
     sed -i "/BotToken/s/''/'$BOT_TOKEN'/" .env.bot &&
     sed -i "/HostAddress/s/''/'$BOT_HOST_ADDRESS'/" .env.bot &&
     sed -i "/SecretToken/s/''/'$BOT_SECRET_TOKEN'/" .env.bot
